@@ -1435,7 +1435,7 @@ function tgDoc(blob,filename,caption){
 
 function tgStart(){
   const t=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-  tg(`🟢 EXAM STARTED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}\n📧 ${stu.email}`);
+  tg(`🟢 EXAM STARTED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}`);
 }
 
 function tgAlert(){
@@ -1448,7 +1448,7 @@ function tgAlert(){
   if(alertN===1){
     // First attempt — warn the student
     logEvent('EXIT_ATTEMPT_1', `Time left: ${tStr}`);
-    const msg1 = `⚠️ INTENTO DE TRAMPA #1\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n📧 ${stu.email}\n\n⚠️ Primera advertencia enviada al estudiante.`;
+    const msg1 = `⚠️ INTENTO DE TRAMPA #1\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n\n⚠️ Primera advertencia enviada al estudiante.`;
     tg(msg1);
     captureScreen('attempt1', `📸 PANTALLA — Intento de salida #1\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`);
     flashBanner(`⚠️ ADVERTENCIA: No salgas de la ventana del examen. Si lo intentas de nuevo, el examen se cerrará automáticamente, se notificará al profesor y perderás el examen.`, false);
@@ -1458,7 +1458,7 @@ function tgAlert(){
     submitted = true;
     clearInterval(timerInt);
     captureScreen('attempt2', `📸 PANTALLA — Intento #2 (EXAMEN CERRADO)\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`, function(){ sendEventLog(); });
-    tg(`🚨 EXAMEN CERRADO POR TRAMPA\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n📧 ${stu.email}\n\n❌ El examen fue cerrado automáticamente por intento de trampa #${alertN}.`);
+    tg(`🚨 EXAMEN CERRADO POR TRAMPA\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n\n❌ El examen fue cerrado automáticamente por intento de trampa #${alertN}.`);
     flashBanner(`🚨 Examen cerrado. Se ha notificado al profesor. Has perdido el examen por intentar salir de la ventana.`, true);
     // Lock the exam
     setTimeout(()=>lockExam(), 3500);
@@ -1488,7 +1488,7 @@ function tgResults(sc){
   const pct=Math.round(sc.total/sc.grand*100);
   const grade=calcGrade(sc.total,sc.grand);
   const t=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-  tg(`🔴 EXAM FINISHED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}\n\n📊 Score: ${sc.total}/${sc.grand} (${pct}%)\n🎯 GRADE: ${grade} / 5.0\n\n📚 Vocab: ${sc.vs}/${sc.vt}\n✏️ Grammar: ${sc.gs}/${sc.gt}\n📧 ${stu.email}\n\n📄 Full correction sent separately.`);
+  tg(`🔴 EXAM FINISHED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}\n\n📊 Score: ${sc.total}/${sc.grand} (${pct}%)\n🎯 GRADE: ${grade} / 5.0\n\n📚 Vocab: ${sc.vs}/${sc.vt}\n✏️ Grammar: ${sc.gs}/${sc.gt}\n\n📄 Full correction sent separately.`);
 }
 
 function flashBanner(msg, permanent){
