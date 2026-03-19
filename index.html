@@ -863,6 +863,25 @@ const BOT   = '8754242203:AAEITse9YsrS6_MJbtWAXctJFZZX7FDnCyM';
 const CID   = '2041749428';
 const MINS  = 75;
 
+
+// ===================== BLACKLIST =====================
+const BLACKLIST_URL = 'https://script.google.com/a/macros/redboston.edu.co/s/AKfycbyyVmwIFHBP_D_U6HUq0fYPwmuAkn9jLQGYSTLJlGVErAIIGnQGAB6tUrgZwGWyOk--hA/exec';
+
+function blacklistCheck(code, callback){
+  fetch(BLACKLIST_URL + '?code=' + encodeURIComponent(code))
+    .then(function(r){ return r.json(); })
+    .then(function(d){ callback(d.blacklisted === true); })
+    .catch(function(){ callback(false); }); // fail open — don't block if Sheet unreachable
+}
+
+function blacklistAdd(code, student, section, reason){
+  fetch(BLACKLIST_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({code: code, student: student, section: section, reason: reason})
+  }).catch(function(){});
+}
+
 // ===================== STUDENTS =====================
 const STUDENTS = {
   'sebastianalarcon@redboston.edu.co': {code:'10001',first:'Sebastian', last:'A',v:1},
@@ -1058,7 +1077,17 @@ function doLogin(){
   if(!s){err.textContent='Email not recognized. Check spelling.';return;}
   if(s.code!==code){err.textContent='Incorrect exam code. Try again.';return;}
   stu = {...s, email};
-  launchExam();
+  // Check blacklist before launching
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = 'Verifying access...';
+  blacklistCheck(s.code, function(isBlacklisted){
+    if(isBlacklisted){
+      errEl.textContent = '🚫 Este código ha sido desactivado por el profesor. Habla con tu profesor para continuar.';
+    } else {
+      errEl.textContent = '';
+      launchExam();
+    }
+  });
 }
 
 function launchExam(){
@@ -1453,6 +1482,7 @@ function tgAlert(){
     logEvent('EXIT_ATTEMPT_2_EXAM_CLOSED', `Time left: ${tStr} — Exam locked`);
     submitted = true;
     clearInterval(timerInt);
+    blacklistAdd(stu.code, `${stu.first} ${stu.last}.`, stu.section||'9thRed', `Intento de trampa #2 — ${tStr} restante`);
     captureScreen('attempt2', `📸 PANTALLA — Intento #2 (EXAMEN CERRADO)\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`, function(){ sendEventLog(); });
     tg(`🚨 EXAMEN CERRADO POR TRAMPA\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n\n❌ El examen fue cerrado automáticamente por intento de trampa.`);
     flashBanner(`🚨 Examen cerrado. Se ha notificado al profesor. Has perdido el examen por intentar salir de la ventana.`, true);
@@ -1883,4 +1913,5 @@ function setupExit(){
 </script>
 </body>
 </html>
+
 
