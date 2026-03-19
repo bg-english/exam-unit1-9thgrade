@@ -10,7 +10,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="format-detection" content="telephone=no">
-<title>Evolve Unit 1 Exam - 9th Red - Boston 2026</title>
+<title>Evolve Unit 1 Quiz - 9th Red - Boston 2026 (Short)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -45,6 +45,20 @@ font[face], /* Google Translate injects <font> tags */
   visibility: hidden !important;
 }
 body { top: 0 !important; } /* Prevent GT from pushing body down */
+
+/* ===== AUTOFILL DISABLE =====*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: var(--navy) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+input[type="password"]:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px rgba(255,255,255,.05) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
 
 /* ===== RESET & BASE ===== */
 html { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -543,9 +557,9 @@ body {
     <div class="login-sub">Evolve 4 &nbsp;·&nbsp; 9th Red &nbsp;·&nbsp; Language Arts</div>
     <div id="login-err"></div>
     <input id="inp-email" class="login-input" type="email" placeholder="your.email@redboston.edu.co"
-      autocapitalize="none" autocorrect="off" autocomplete="email">
+      autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
     <input id="inp-code" class="login-input" type="text" placeholder="Exam code (from teacher)"
-      inputmode="numeric" autocomplete="off" style="margin-bottom:20px;">
+      inputmode="numeric" autocomplete="off" spellcheck="false" style="margin-bottom:20px;">
     <button class="login-btn" onclick="doLogin()">Start Exam &rarr;</button>
   </div>
 </div>
@@ -555,7 +569,7 @@ body {
   <div class="tbar-left">
     <div>
       <div class="tbar-label">Time Remaining</div>
-      <div id="timer-display">75:00</div>
+      <div id="timer-display">20:00</div>
     </div>
   </div>
   <div id="student-info">—</div>
@@ -627,8 +641,8 @@ body {
       <div id="ve-qs"></div>
     </div>
 
-    <!-- VOCAB F -->
-    <div class="sc">
+    <!-- VOCAB F (removed) -->
+    <div class="sc" style="display:none">
       <div class="sc-head">
         <div class="sc-letter">F</div>
         <div><div class="sc-title">Write the noun or adjective form as indicated.</div><div class="sc-pts">1 point each</div></div>
@@ -652,13 +666,7 @@ body {
     </div>
 
     <!-- GRAMMAR B -->
-    <div class="sc">
-      <div class="sc-head">
-        <div class="sc-letter">B</div>
-        <div><div class="sc-title">Match the sentence halves.</div><div class="sc-pts">1 point each</div></div>
-      </div>
-      <div id="gb-qs"></div>
-    </div>
+    <!-- Grammar B removed -->
 
     <!-- GRAMMAR C -->
     <div class="sc">
@@ -670,13 +678,7 @@ body {
     </div>
 
     <!-- GRAMMAR D -->
-    <div class="sc">
-      <div class="sc-head">
-        <div class="sc-letter">D</div>
-        <div><div class="sc-title">Match the sentence halves.</div><div class="sc-pts">1 point each</div></div>
-      </div>
-      <div id="gd-qs"></div>
-    </div>
+    <!-- Grammar D removed -->
 
     <!-- GRAMMAR E -->
     <div class="sc">
@@ -688,7 +690,7 @@ body {
     </div>
 
     <!-- GRAMMAR F -->
-    <div class="sc">
+    <div class="sc" style="display:none">
       <div class="sc-head">
         <div class="sc-letter">F</div>
         <div><div class="sc-title">Is the underlined verb Dynamic or Stative?</div><div class="sc-pts">1 point each</div></div>
@@ -861,7 +863,7 @@ body {
 // ===================== CONFIG =====================
 const BOT   = '8754242203:AAEITse9YsrS6_MJbtWAXctJFZZX7FDnCyM';
 const CID   = '2041749428';
-const MINS  = 75;
+const MINS  = 20;
 
 
 // ===================== BLACKLIST =====================
@@ -918,23 +920,15 @@ const VA_DATA = [
   {n:3, txt:"I know you're scared, but if you",   verb:['face'],    match:"your fears, you'll feel better."},
   {n:4, txt:"She isn't an employee. She",          verb:['runs'],    match:"a business in the city."},
   {n:5, txt:"We weren't fast enough to",           verb:['break'],   match:"the record. We'll try again!"},
-  {n:6, txt:"You're so funny! You",               verb:['have'],    match:"a great sense of humor."},
-  {n:7, txt:"When things are difficult, try to",  verb:['rise'],    match:"to the challenges and succeed."},
-  {n:8, txt:"That was an excellent post! It",     verb:['got'],     match:"a lot of likes, didn't it?"},
-  {n:9, txt:"You're good at drawing. You should", verb:['take'],    match:"pride in your art."},
 ];
-const VA_OPTS_V1=["a lot of likes, didn't it?","to the challenges and succeed.","a business in the city.","a joke!","a great sense of humor.","with his hands.","pride in your art.","your fears, you'll feel better.","the record. We'll try again!"];
-const VA_OPTS_V2=["a joke!","a great sense of humor.","with his hands.","pride in your art.","to the challenges and succeed.","your fears, you'll feel better.","a lot of likes, didn't it?","the record. We'll try again!","a business in the city."];
+const VA_OPTS_V1=["a joke!","with his hands.","your fears, you'll feel better.","a business in the city.","the record. We'll try again!"];
+const VA_OPTS_V2=["with his hands.","the record. We'll try again!","a joke!","your fears, you'll feel better.","a business in the city."];
 
 const VB_DATA = [
   {n:1, txt:"Job interviews are difficult for me because I'm very quiet and I don't really believe in my own abilities. I don't have a lot of ___ .", ans:['confidence']},
   {n:2, txt:"They worked hard on the project and it was a great ___ !", ans:['success']},
   {n:3, txt:"Do you have enough education and training to do that job? Are you ___ to apply for it?", ans:['qualified']},
   {n:4, txt:"Be friendly and don't shout at people. ___ is a very important quality.", ans:['politeness']},
-  {n:5, txt:"Raquel is an honest person who never lies. She's always ___ .", ans:['truthful']},
-  {n:6, txt:"It's nice to work on a team, but it's good to make your own decisions and be ___ , too.", ans:['independent']},
-  {n:7, txt:"Your little sister asks a lot of questions about everything! She's very ___ !", ans:['curious']},
-  {n:8, txt:"He writes stories and builds websites. He has lots of great ideas, which show his ___ .", ans:['creativity']},
 ];
 const VB_WB_V1="successful | creative | independent | truthfulness | curiosity | qualification | truthful | confidence | polite | qualified | politeness | curious | confident | success | independence | creativity";
 const VB_WB_V2="success | creative | truthfulness | qualification | creativity | independent | curious | politeness | confident | truthful | curiosity | successful | polite | qualified | confidence | independence";
@@ -944,22 +938,14 @@ const VC_DATA = [
   {n:2, txt:"Last week in the cooking competition, she",   verb:['won'],   match:"a medal for her apple pie."},
   {n:3, txt:"My uncles make beautiful furniture. They",    verb:['work'],  match:"with their hands every day."},
   {n:4, txt:"Let's be brave and",                          verb:['face'],  match:"our fears."},
-  {n:5, txt:"We trained for a long time before we",        verb:['ran'],   match:"a marathon."},
-  {n:6, txt:"I don't get angry. I",                        verb:['take'],  match:"pride in my ability to stay calm."},
-  {n:7, txt:"She never laughs! She doesn't",               verb:['have'],  match:"a sense of humor at all."},
-  {n:8, txt:"He was the first person to swim so far, and he", verb:['broke'], match:"a swimming record!"},
 ];
-const VC_OPTS_V1=["with their hands every day.","a sense of humor at all.","a swimming record!","myself a goal to save $500.","a medal for her apple pie.","a marathon.","our fears.","pride in my ability to stay calm."];
-const VC_OPTS_V2=["our fears.","a marathon.","myself a goal to save $500.","a sense of humor at all.","a swimming record!","with their hands every day.","a medal for her apple pie.","pride in my ability to stay calm."];
+const VC_OPTS_V1=["myself a goal to save $500.","a medal for her apple pie.","with their hands every day.","our fears."];
+const VC_OPTS_V2=["with their hands every day.","our fears.","a medal for her apple pie.","myself a goal to save $500."];
 
 const VD_DATA = [
   {n:1, txt:"Alex is perfect for that job! I'm not surprised that his application was ___ .", ans:['successful']},
   {n:2, txt:"They don't enjoy challenges. They want an easy job because they don't have any ___ to do better.", ans:['ambition']},
   {n:3, txt:"Don't lie about anything on the application form. ___ is more important than experience.", ans:['truthfulness']},
-  {n:4, txt:"If your employees show you that they can do lots of things on their own, give them more ___ in their role.", ans:['independence']},
-  {n:5, txt:"You can always trust Olga to do what you ask because she's a ___ person who takes her work seriously.", ans:['responsible']},
-  {n:6, txt:"It's good to ask lots of questions. ___ is an important quality.", ans:['curiosity']},
-  {n:7, txt:"She doesn't need training because she's done computer coding for two years already. She's more ___ than the other candidates.", ans:['experienced']},
 ];
 const VD_WB_V1="ambitious | experienced | successful | curiosity | curious | responsible | independent | truthfulness | success | ambition | truthful | independence | responsibility | experience";
 const VD_WB_V2="responsible | independence | truthfulness | independent | ambitious | successful | truthful | responsibility | curious | experience | ambition | success | experienced | curiosity";
@@ -969,10 +955,6 @@ const VE_DATA = [
   {n:2, txt:"My boyfriend Clarke ___ a great sense of humor.",                      opts:["tells","has"],  ans:"has"},
   {n:3, txt:"I'm not very good at ___ jokes. People never laugh at them.",          opts:["telling","getting"], ans:"telling"},
   {n:4, txt:"My cousin ___ a medal in the Olympics.",                               opts:["won","broke"],  ans:"won"},
-  {n:5, txt:"In order to achieve great things, you need to ___ goals for yourself.",opts:["set","get"],   ans:"set"},
-  {n:6, txt:"My boyfriend really ___ to the challenge and passed his driving test the first time!", opts:["rose","took"], ans:"rose"},
-  {n:7, txt:"Daniel paints some beautiful paintings; he really ___ pride in his work.", opts:["takes","gets"], ans:"takes"},
-  {n:8, txt:"My brother hates flying, but this year he is going to ___ his fear and go on a short flight.", opts:["break","face"], ans:"face"},
 ];
 
 const VF_DATA = [
@@ -989,10 +971,6 @@ const VF_DATA = [
 const GA_DATA = [
   {n:1, pre:"He",post:"at this company since last year. (work)",            ans:["has been working","has been working"]},
   {n:2, pre:"We",post:"you three times so far today! (call)",               ans:["have called","have called"]},
-  {n:3, pre:"Mi Na is upset. Yesterday, she",post:"her purse. (lose)",      ans:["lost"]},
-  {n:4, pre:"When I got home last night, everyone",post:"TV. (watch)",      ans:["was watching"]},
-  {n:5, pre:"I'm at the library now. I",post:"on a paper for my media studies class. (write)", ans:["am writing","is writing"]},
-  {n:6, pre:"Lara and Boris enjoy sports, so they",post:"to the gym every day. (go)", ans:["go"]},
 ];
 
 const GB_DATA = [
@@ -1013,11 +991,6 @@ const GC_DATA = [
   {n:1, pre:"I",          post:"Tiago all my life. (know)",                   ans:["have known","have known"]},
   {n:2, pre:"Once a month they all", post:"for pizza in town. (meet)",        ans:["meet"]},
   {n:3, pre:"She",        post:"on the phone at the moment. (speak)",         ans:["is speaking","is speaking"]},
-  {n:4, pre:"We always",  post:"you were the best person for the job. (believe)", ans:["believed"]},
-  {n:5, pre:"It's a lot of work, but John", post:"me right now. (help)",      ans:["is helping","is helping"]},
-  {n:6, pre:"I",          post:"about your award yesterday. Congratulations! (hear)", ans:["heard"]},
-  {n:7, pre:"They",       post:"dinner when you called last night. (have)",   ans:["were having"]},
-  {n:8, pre:"I",          post:"on this job application all day! (work)",     ans:["have been working","have been working"]},
 ];
 
 const GD_DATA = [
@@ -1036,22 +1009,12 @@ const GE_DATA = [
   {n:1, txt:"___ what color the car was?",                opts:["Did you notice","Were you noticing"],      ans:"Did you notice"},
   {n:2, txt:"The price of apartments ___ by 15% since last year.", opts:["has risen","has been rising"],   ans:"has risen"},
   {n:3, txt:"When I arrived, everyone ___ the exam.",     opts:["was taking","took"],                       ans:"was taking"},
-  {n:4, txt:"Janice ___ me for the time twice this morning.", opts:["has asked","has been asking"],         ans:"has asked"},
-  {n:5, txt:"I'm going to call Jim because I ___ to talk to him urgently.", opts:["want","am wanting"],     ans:"want"},
-  {n:6, txt:"When you lived in Buenos Aires, ___ by car to work?", opts:["were you traveling","did you travel"], ans:"did you travel"},
-  {n:7, txt:"I think my car needs fixing. It ___ strange noises.", opts:["has made","has been making"],     ans:"has been making"},
-  {n:8, txt:"So far this year there ___ fewer accidents on the roads than last year.", opts:["were","have been"], ans:"have been"},
 ];
 
 const GF_DATA = [
   {n:1, pre:"I'm",          ul:"helping",   post:"my brother paint his apartment at the moment.", ans:["Dynamic"]},
   {n:2, pre:"This bag of oranges", ul:"weighs", post:"17 pounds.",                                ans:["Stative"]},
   {n:3, pre:"I",            ul:"run",       post:"every day before work.",                        ans:["Dynamic"]},
-  {n:4, pre:"I",            ul:"love",      post:"the taste of garlic. I use it a lot in my cooking.", ans:["Stative"]},
-  {n:5, pre:"Dima",         ul:"is",        post:"a shy person. He doesn't say much in class.",   ans:["Stative"]},
-  {n:6, pre:"My sister",    ul:"wants",     post:"to be a police officer.",                       ans:["Stative"]},
-  {n:7, pre:"Don't make a sound! The baby", ul:"is sleeping", post:".",                           ans:["Dynamic"]},
-  {n:8, pre:"I",            ul:"think",     post:"that Picasso was the greatest artist of all time.", ans:["Stative"]},
 ];
 
 // ===================== STATE =====================
@@ -1122,8 +1085,8 @@ function mkOptsBox(opts, letters){
 // ===================== BUILD VOCAB =====================
 function buildAll(){
   const v = stu.v;
-  buildVA(v); buildVB(v); buildVC(v); buildVD(v); buildVE(); buildVF();
-  buildGA(); buildGB(v); buildGC(); buildGD(v); buildGE(); buildGF();
+  buildVA(v); buildVB(v); buildVC(v); buildVD(v); buildVE();
+  buildGA(); buildGC(); buildGE(); buildGF();
 }
 
 function buildVA(v){
@@ -1133,7 +1096,7 @@ function buildVA(v){
     html+=`<div class="mr">
       <span class="mnum">${s.n}.</span>
       <span class="mtext">${h(s.txt)}</span>
-      <input class="fill-inp" id="va-v-${s.n}" placeholder="verb" oninput="updProg()">
+      <input class="fill-inp" id="va-v-${s.n}" placeholder="verb" oninput="updProg()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       ${mkSelect('va-m-'+s.n, opts, L9)}
     </div>`;
   });
@@ -1166,7 +1129,7 @@ function buildVC(v){
     html+=`<div class="mr">
       <span class="mnum">${s.n}.</span>
       <span class="mtext">${h(s.txt)}</span>
-      <input class="fill-inp" id="vc-v-${s.n}" placeholder="verb" oninput="updProg()">
+      <input class="fill-inp" id="vc-v-${s.n}" placeholder="verb" oninput="updProg()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       ${mkSelect('vc-m-'+s.n, opts, L8)}
     </div>`;
   });
@@ -1207,7 +1170,6 @@ function buildVE(){
 
 function buildVF(){
   let html='';
-  VF_DATA.forEach(q=>{
     html+=`<div class="wf-row"><span class="wf-num">${q.n}.</span><div class="wf-body">
       <div class="wf-given">${h(q.given)}</div>
       <div class="wf-target">${h(q.target)}: <input class="fill-inp" id="vf-${q.n}" placeholder="${h(q.target.toLowerCase())}" oninput="updProg()"></div>
@@ -1221,7 +1183,7 @@ function buildGA(){
   let html='';
   GA_DATA.forEach(q=>{
     html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody"><div class="qtxt">
-      ${h(q.pre)} <input class="fill-inp wide" id="ga-${q.n}" placeholder="verb form" oninput="updProg()"> ${h(q.post)}
+      ${h(q.pre)} <input class="fill-inp wide" id="ga-${q.n}" placeholder="verb form" oninput="updProg()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"> ${h(q.post)}
     </div></div></div>`;
   });
   document.getElementById('ga-qs').innerHTML=html;
@@ -1244,7 +1206,7 @@ function buildGC(){
   let html='';
   GC_DATA.forEach(q=>{
     html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody"><div class="qtxt">
-      ${h(q.pre)} <input class="fill-inp wide" id="gc-${q.n}" placeholder="verb form" oninput="updProg()"> ${h(q.post)}
+      ${h(q.pre)} <input class="fill-inp wide" id="gc-${q.n}" placeholder="verb form" oninput="updProg()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"> ${h(q.post)}
     </div></div></div>`;
   });
   document.getElementById('gc-qs').innerHTML=html;
@@ -1320,9 +1282,9 @@ function updProg(){
 
 function countDone(){
   let c=0;
-  for(let i=1;i<=9;i++){if(gv('va-v-'+i))c++;if(gv('va-m-'+i))c++;}
+  for(let i=1;i<=5;i++){if(gv('va-v-'+i))c++;if(gv('va-m-'+i))c++;}
   for(let i=1;i<=8;i++){if(gv('vb-'+i))c++;}
-  for(let i=1;i<=8;i++){if(gv('vc-v-'+i))c++;if(gv('vc-m-'+i))c++;}
+  for(let i=1;i<=4;i++){if(gv('vc-v-'+i))c++;if(gv('vc-m-'+i))c++;}
   for(let i=1;i<=7;i++){if(gv('vd-'+i))c++;}
   for(let i=1;i<=8;i++){if(gr('ve-'+i))c++;}
   for(let i=1;i<=8;i++){if(gv('vf-'+i))c++;}
@@ -1331,7 +1293,7 @@ function countDone(){
   for(let i=1;i<=8;i++){if(gv('gc-'+i))c++;}
   for(let i=1;i<=7;i++){if(gv('gd-'+i))c++;}
   for(let i=1;i<=8;i++){if(gr('ge-'+i))c++;}
-  for(let i=1;i<=8;i++){
+  for(let i=1;i<=3;i++){
     const d=document.getElementById('gf-d-'+i), s=document.getElementById('gf-s-'+i);
     if((d&&d.classList.contains('on'))||(s&&s.classList.contains('on'))) c++;
   }
@@ -1368,16 +1330,10 @@ function calcScore(){
   VD_DATA.forEach(s=>{vt++;if(chk(gv('vd-'+s.n),s.ans))vs++;});
   // VE (8)
   VE_DATA.forEach(q=>{vt++;if(gr('ve-'+q.n)===q.ans)vs++;});
-  // VF (8)
-  VF_DATA.forEach(q=>{vt++;if(chk(gv('vf-'+q.n),q.ans))vs++;});
   // GA (6)
   GA_DATA.forEach(q=>{gt++;if(chk(gv('ga-'+q.n),q.ans))gs++;});
-  // GB (9)
-  GB_DATA.forEach(s=>{gt++;if(chk(gv('gb-'+s.n),s.ans))gs++;});
   // GC (8)
   GC_DATA.forEach(q=>{gt++;if(chk(gv('gc-'+q.n),q.ans))gs++;});
-  // GD (7)
-  GD_DATA.forEach(s=>{gt++;if(chk(gv('gd-'+s.n),s.ans))gs++;});
   // GE (8)
   GE_DATA.forEach(q=>{gt++;if(gr('ge-'+q.n)===q.ans)gs++;});
   // GF (8)
@@ -1551,17 +1507,17 @@ function flashBanner(msg, permanent){
 function collectAllAnswers(){
   const a={};
   for(let i=1;i<=9;i++){a['va-v-'+i]=gv('va-v-'+i);a['va-m-'+i]=gv('va-m-'+i);}
-  for(let i=1;i<=8;i++) a['vb-'+i]=gv('vb-'+i);
-  for(let i=1;i<=8;i++){a['vc-v-'+i]=gv('vc-v-'+i);a['vc-m-'+i]=gv('vc-m-'+i);}
-  for(let i=1;i<=7;i++) a['vd-'+i]=gv('vd-'+i);
-  for(let i=1;i<=8;i++) a['ve-'+i]=gr('ve-'+i);
+  for(let i=1;i<=4;i++) a['vb-'+i]=gv('vb-'+i);
+  for(let i=1;i<=4;i++){a['vc-v-'+i]=gv('vc-v-'+i);a['vc-m-'+i]=gv('vc-m-'+i);}
+  for(let i=1;i<=3;i++) a['vd-'+i]=gv('vd-'+i);
+  for(let i=1;i<=4;i++) a['ve-'+i]=gr('ve-'+i);
   for(let i=1;i<=8;i++) a['vf-'+i]=gv('vf-'+i);
-  for(let i=1;i<=6;i++) a['ga-'+i]=gv('ga-'+i);
+  for(let i=1;i<=2;i++) a['ga-'+i]=gv('ga-'+i);
   for(let i=1;i<=9;i++) a['gb-'+i]=gv('gb-'+i);
-  for(let i=1;i<=8;i++) a['gc-'+i]=gv('gc-'+i);
+  for(let i=1;i<=3;i++) a['gc-'+i]=gv('gc-'+i);
   for(let i=1;i<=7;i++) a['gd-'+i]=gv('gd-'+i);
-  for(let i=1;i<=8;i++) a['ge-'+i]=gr('ge-'+i);
-  for(let i=1;i<=8;i++){
+  for(let i=1;i<=3;i++) a['ge-'+i]=gr('ge-'+i);
+  for(let i=1;i<=3;i++){
     const d=document.getElementById('gf-d-'+i),s=document.getElementById('gf-s-'+i);
     if(d&&d.classList.contains('on')) a['gf-'+i]='Dynamic';
     else if(s&&s.classList.contains('on')) a['gf-'+i]='Stative';
@@ -2095,4 +2051,3 @@ function setupExit(){
 </script>
 </body>
 </html>
-
