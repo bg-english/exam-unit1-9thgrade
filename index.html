@@ -12,6 +12,7 @@
 <meta name="format-detection" content="telephone=no">
 <title>Evolve Unit 1 Exam - 9th Red - Boston 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* ===== CSS CUSTOM PROPERTIES (with IE fallbacks inline where needed) ===== */
 :root {
@@ -1621,121 +1622,248 @@ function sendEventLog(){
 
 // ===================== CORRECTION DOC + SEND =====================
 function sendPDF(sc){
-  const ans=collectAllAnswers();
-  const grade=calcGrade(sc.total,sc.grand);
-  const pct=Math.round(sc.total/sc.grand*100);
-  const date=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
-  const S=(ok,correct)=>ok?'✓':`✗  →  ${correct}`;
-  const lines=[];
+  const ans   = collectAllAnswers();
+  const grade = calcGrade(sc.total, sc.grand);
+  const pct   = Math.round(sc.total/sc.grand*100);
+  const date  = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const G     = sc.grand;
 
-  lines.push('COLEGIO BOSTON FLEXIBLE — LANGUAGE ARTS — 9TH RED 2026');
-  lines.push('EVOLVE UNIT 1 EXAM — FULL CORRECTION');
-  lines.push('═'.repeat(62));
-  lines.push(`Student : ${stu.first} ${stu.last}.`);
-  lines.push(`Email   : ${stu.email}`);
-  lines.push(`Version : ${stu.v}      Date: ${date}`);
-  lines.push('─'.repeat(62));
-  lines.push(`SCORE   : ${sc.total} / ${sc.grand} pts  (${pct}%)`);
-  lines.push(`GRADE   : ${grade} / 5.0`);
-  lines.push(`Vocab   : ${sc.vs} / ${sc.vt} pts`);
-  lines.push(`Grammar : ${sc.gs} / ${sc.gt} pts`);
-  lines.push('═'.repeat(62));
-
-  lines.push('\nVOCABULARY');
-  lines.push('─'.repeat(40));
-  lines.push('A. Verb phrase + Match');
-  VA_DATA.forEach(s=>{
-    const vOk=chk(ans['va-v-'+s.n],s.verb);
-    const mOk=chk(ans['va-m-'+s.n],s.match);
-    lines.push(`  ${s.n}. "${ans['va-v-'+s.n]||'—'}"  ${S(vOk,s.verb[0])}  |  match: "${ans['va-m-'+s.n]||'—'}"  ${S(mOk,s.match)}`);
-  });
-
-  lines.push('\nB. Word families (fill in the blank)');
-  VB_DATA.forEach(s=>{
-    const ok=chk(ans['vb-'+s.n],s.ans);
-    lines.push(`  ${s.n}. "${ans['vb-'+s.n]||'—'}"  ${S(ok,s.ans[0])}`);
-  });
-
-  lines.push('\nC. Verb phrase + Match');
-  VC_DATA.forEach(s=>{
-    const vOk=chk(ans['vc-v-'+s.n],s.verb);
-    const mOk=chk(ans['vc-m-'+s.n],s.match);
-    lines.push(`  ${s.n}. "${ans['vc-v-'+s.n]||'—'}"  ${S(vOk,s.verb[0])}  |  match: "${ans['vc-m-'+s.n]||'—'}"  ${S(mOk,s.match)}`);
-  });
-
-  lines.push('\nD. Word families (fill in the blank)');
-  VD_DATA.forEach(s=>{
-    const ok=chk(ans['vd-'+s.n],s.ans);
-    lines.push(`  ${s.n}. "${ans['vd-'+s.n]||'—'}"  ${S(ok,s.ans[0])}`);
-  });
-
-  lines.push('\nE. Circle correct');
-  VE_DATA.forEach(q=>{
-    const ok=ans['ve-'+q.n]===q.ans;
-    lines.push(`  ${q.n}. "${ans['ve-'+q.n]||'—'}"  ${S(ok,q.ans)}`);
-  });
-
-  lines.push('\nF. Word forms');
-  VF_DATA.forEach(q=>{
-    const ok=chk(ans['vf-'+q.n],q.ans);
-    lines.push(`  ${q.n}. ${q.given}  →  ${q.target}: "${ans['vf-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
-  });
-
-  lines.push('\n'+'─'.repeat(40));
-  lines.push('GRAMMAR');
-  lines.push('─'.repeat(40));
-
-  lines.push('A. Verb forms');
-  GA_DATA.forEach(q=>{
-    const ok=chk(ans['ga-'+q.n],q.ans);
-    lines.push(`  ${q.n}. "${ans['ga-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
-  });
-
-  lines.push('\nB. Match');
-  GB_DATA.forEach(s=>{
-    const ok=chk(ans['gb-'+s.n],s.ans);
-    lines.push(`  ${s.n}. "${ans['gb-'+s.n]||'—'}"  ${S(ok,s.ans)}`);
-  });
-
-  lines.push('\nC. Verb forms');
-  GC_DATA.forEach(q=>{
-    const ok=chk(ans['gc-'+q.n],q.ans);
-    lines.push(`  ${q.n}. "${ans['gc-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
-  });
-
-  lines.push('\nD. Match');
-  GD_DATA.forEach(s=>{
-    const ok=chk(ans['gd-'+s.n],s.ans);
-    lines.push(`  ${s.n}. "${ans['gd-'+s.n]||'—'}"  ${S(ok,s.ans)}`);
-  });
-
-  lines.push('\nE. Circle correct');
-  GE_DATA.forEach(q=>{
-    const ok=ans['ge-'+q.n]===q.ans;
-    lines.push(`  ${q.n}. "${ans['ge-'+q.n]||'—'}"  ${S(ok,q.ans)}`);
-  });
-
-  lines.push('\nF. Dynamic / Stative');
-  GF_DATA.forEach(q=>{
-    const ok=chk(ans['gf-'+q.n],q.ans);
-    lines.push(`  ${q.n}. [${q.ul}]  "${ans['gf-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
-  });
-
-  lines.push('\n'+'═'.repeat(62));
-  lines.push('GRADING SCALE REFERENCE');
-  lines.push('─'.repeat(40));
-  const G=sc.grand;
-  for(let w=0;w<=15;w++){
-    const s2=G-w; const g2=calcGrade(s2,G);
-    const mark=s2===sc.total?'  ◄ THIS STUDENT':'';
-    lines.push(`  ${String(s2).padStart(3)} / ${G} pts  →  ${g2} / 5.0${mark}`);
+  // ── jsPDF available? ──
+  if(typeof window.jspdf === 'undefined' && typeof jspdf === 'undefined'){
+    // fallback: send plain text
+    sendPDFfallback(sc, ans, grade, pct, date, G);
+    return;
   }
-  lines.push('═'.repeat(62));
 
+  try {
+    const { jsPDF } = window.jspdf || jspdf;
+    const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+    const W=210, margin=14;
+    let y=20;
+
+    // ── colours ──
+    const NAVY=[15,32,68], GOLD=[200,153,42], GREEN=[22,163,74], RED=[220,38,38], GREY=[245,244,239];
+
+    // ── helpers ──
+    function setFont(size,style,color){
+      doc.setFontSize(size);
+      doc.setFont('helvetica', style||'normal');
+      doc.setTextColor(...(color||[30,30,30]));
+    }
+    function fillRect(x,fy,w,h,color){ doc.setFillColor(...color); doc.rect(x,fy,w,h,'F'); }
+    function checkPage(need){
+      if(y + need > 280){ doc.addPage(); y = 16; }
+    }
+    function hRule(color){ doc.setDrawColor(...(color||[212,208,200])); doc.setLineWidth(.3); doc.line(margin,y,W-margin,y); y+=3; }
+
+    // ── HEADER ──
+    fillRect(0,0,W,28,NAVY);
+    setFont(13,'bold',GOLD);
+    doc.text('COLEGIO BOSTON FLEXIBLE',W/2,10,{align:'center'});
+    setFont(9,'normal',[200,200,200]);
+    doc.text('Evolve Unit 1 Exam  ·  Language Arts  ·  9th Red  ·  2026',W/2,16,{align:'center'});
+    setFont(8,'normal',[160,160,160]);
+    doc.text('FULL CORRECTION — CONFIDENTIAL',W/2,22,{align:'center'});
+    y=34;
+
+    // ── STUDENT INFO BOX ──
+    fillRect(margin,y,W-margin*2,22,GREY);
+    doc.setDrawColor(...NAVY); doc.setLineWidth(.5); doc.rect(margin,y,W-margin*2,22);
+    setFont(10,'bold',NAVY);
+    doc.text(`${stu.first} ${stu.last}.`,margin+4,y+7);
+    setFont(8,'normal',[80,80,80]);
+    doc.text(`${stu.email}`,margin+4,y+13);
+    doc.text(`Version ${stu.v}   ·   ${date}`,margin+4,y+19);
+    // Score box
+    fillRect(W-margin-42,y+1,40,20,NAVY);
+    setFont(16,'bold',[255,255,255]);
+    doc.text(`${grade}`,W-margin-22,y+11,{align:'center'});
+    setFont(7,'normal',GOLD);
+    doc.text('/ 5.0',W-margin-22,y+17,{align:'center'});
+    y+=28;
+
+    // ── SCORE ROW ──
+    fillRect(margin,y,W-margin*2,12,[230,235,245]);
+    setFont(9,'bold',NAVY);
+    doc.text(`Score: ${sc.total} / ${G} pts  (${pct}%)`,margin+4,y+8);
+    setFont(9,'normal',[80,80,80]);
+    doc.text(`Vocabulary: ${sc.vs}/${sc.vt}   Grammar: ${sc.gs}/${sc.gt}`,W-margin-4,y+8,{align:'right'});
+    y+=16;
+
+    // ── SECTION BUILDER ──
+    function sectionHeader(title){
+      checkPage(14);
+      fillRect(margin,y,W-margin*2,10,NAVY);
+      setFont(9,'bold',[255,255,255]);
+      doc.text(title.toUpperCase(),margin+4,y+7);
+      y+=13;
+    }
+    function subHeader(title){
+      checkPage(10);
+      setFont(8,'bold',NAVY);
+      doc.text(title,margin,y);
+      y+=5;
+      hRule();
+    }
+    function answerRow(num, question, studentAns, correctAns, isOk){
+      checkPage(9);
+      const rowH=8;
+      if(!isOk) fillRect(margin,y,W-margin*2,rowH,[255,240,240]);
+      // number
+      setFont(7,'bold',[150,150,150]);
+      doc.text(String(num)+'.',margin+1,y+5.5);
+      // question (truncated)
+      setFont(7,'normal',[60,60,60]);
+      const qShort = question.length>55 ? question.substring(0,52)+'...' : question;
+      doc.text(qShort,margin+7,y+5.5);
+      // student answer
+      const saX = margin+92;
+      setFont(7,'bold', isOk ? GREEN : RED);
+      const saShort = String(studentAns||'—').length>18 ? String(studentAns||'—').substring(0,17)+'…' : String(studentAns||'—');
+      doc.text(saShort, saX, y+5.5);
+      // checkmark or arrow + correct
+      if(isOk){
+        setFont(8,'bold',GREEN);
+        doc.text('✓', saX+26, y+5.5);
+      } else {
+        setFont(7,'normal',[150,150,150]);
+        doc.text('→', saX+26, y+5.5);
+        setFont(7,'bold',GREEN);
+        const caShort = String(correctAns).length>20 ? String(correctAns).substring(0,19)+'…' : String(correctAns);
+        doc.text(caShort, saX+31, y+5.5);
+      }
+      y+=rowH;
+    }
+
+    // ── VOCABULARY ──
+    sectionHeader('Vocabulary');
+
+    subHeader('A. Verb phrase + Match');
+    VA_DATA.forEach(s=>{
+      const vOk=chk(ans['va-v-'+s.n],s.verb);
+      const mOk=chk(ans['va-m-'+s.n],s.match);
+      answerRow(s.n+'a', s.txt+' [verb]',     ans['va-v-'+s.n]||'—', s.verb[0],  vOk);
+      answerRow(s.n+'b', s.txt+' [match]',    ans['va-m-'+s.n]||'—', s.match,    mOk);
+    });
+
+    checkPage(6); y+=2;
+    subHeader('B. Word families');
+    VB_DATA.forEach(s=>{ answerRow(s.n, s.txt, ans['vb-'+s.n]||'—', s.ans[0], chk(ans['vb-'+s.n],s.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('C. Verb phrase + Match');
+    VC_DATA.forEach(s=>{
+      const vOk=chk(ans['vc-v-'+s.n],s.verb);
+      const mOk=chk(ans['vc-m-'+s.n],s.match);
+      answerRow(s.n+'a', s.txt+' [verb]',  ans['vc-v-'+s.n]||'—', s.verb[0], vOk);
+      answerRow(s.n+'b', s.txt+' [match]', ans['vc-m-'+s.n]||'—', s.match,   mOk);
+    });
+
+    checkPage(6); y+=2;
+    subHeader('D. Word families');
+    VD_DATA.forEach(s=>{ answerRow(s.n, s.txt, ans['vd-'+s.n]||'—', s.ans[0], chk(ans['vd-'+s.n],s.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('E. Circle correct');
+    VE_DATA.forEach(q=>{ answerRow(q.n, q.txt, ans['ve-'+q.n]||'—', q.ans, ans['ve-'+q.n]===q.ans); });
+
+    checkPage(6); y+=2;
+    subHeader('F. Word forms');
+    VF_DATA.forEach(q=>{ answerRow(q.n, q.given+' → '+q.target, ans['vf-'+q.n]||'—', q.ans[0], chk(ans['vf-'+q.n],q.ans)); });
+
+    // ── GRAMMAR ──
+    checkPage(16); y+=4;
+    sectionHeader('Grammar');
+
+    subHeader('A. Verb forms');
+    GA_DATA.forEach(q=>{ answerRow(q.n, q.pre+' ___ '+q.post, ans['ga-'+q.n]||'—', q.ans[0], chk(ans['ga-'+q.n],q.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('B. Match');
+    GB_DATA.forEach(s=>{ answerRow(s.n, s.txt, ans['gb-'+s.n]||'—', s.ans, chk(ans['gb-'+s.n],s.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('C. Verb forms');
+    GC_DATA.forEach(q=>{ answerRow(q.n, q.pre+' ___ '+q.post, ans['gc-'+q.n]||'—', q.ans[0], chk(ans['gc-'+q.n],q.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('D. Match');
+    GD_DATA.forEach(s=>{ answerRow(s.n, s.txt, ans['gd-'+s.n]||'—', s.ans, chk(ans['gd-'+s.n],s.ans)); });
+
+    checkPage(6); y+=2;
+    subHeader('E. Circle correct');
+    GE_DATA.forEach(q=>{ answerRow(q.n, q.txt, ans['ge-'+q.n]||'—', q.ans, ans['ge-'+q.n]===q.ans); });
+
+    checkPage(6); y+=2;
+    subHeader('F. Dynamic / Stative');
+    GF_DATA.forEach(q=>{ answerRow(q.n, q.pre+' ['+q.ul+'] '+q.post, ans['gf-'+q.n]||'—', q.ans[0], chk(ans['gf-'+q.n],q.ans)); });
+
+    // ── GRADING SCALE ──
+    checkPage(20); y+=6;
+    fillRect(margin,y,W-margin*2,10,NAVY);
+    setFont(9,'bold',[255,255,255]);
+    doc.text('GRADING SCALE',margin+4,y+7);
+    y+=13;
+    let scaleX=margin; const colW=38;
+    for(let w=0;w<=15;w++){
+      const s2=G-w; const g2=calcGrade(s2,G);
+      const isMe=(s2===sc.total);
+      if(isMe) fillRect(scaleX,y-1,colW-1,8,GOLD);
+      setFont(7, isMe?'bold':'normal', isMe?NAVY:[80,80,80]);
+      doc.text(`${s2}/${G} → ${g2}`,scaleX+2,y+5);
+      scaleX+=colW;
+      if(scaleX+colW > W-margin){ scaleX=margin; y+=9; checkPage(9); }
+    }
+    y+=12;
+
+    // ── FOOTER ──
+    const pages=doc.getNumberOfPages();
+    for(let p=1;p<=pages;p++){
+      doc.setPage(p);
+      setFont(7,'normal',[150,150,150]);
+      doc.text(`Colegio Boston Flexible · ${date} · Confidential`, margin, 290);
+      doc.text(`Page ${p}/${pages}`, W-margin, 290, {align:'right'});
+    }
+
+    // ── SEND ──
+    const pdfBlob = doc.output('blob');
+    const fname   = `Correction_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.pdf`;
+    const cap     = `📄 ${stu.first} ${stu.last}. | V${stu.v} | ${sc.total}/${G} pts | Grade: ${grade}/5.0`;
+    tgDoc(pdfBlob, fname, cap);
+
+  } catch(err){
+    console.error('jsPDF error:', err);
+    sendPDFfallback(sc, collectAllAnswers(), grade, pct, date, G);
+  }
+}
+
+// Fallback: plain text if jsPDF fails to load
+function sendPDFfallback(sc, ans, grade, pct, date, G){
+  const S=(ok,correct)=>ok?'✓':'✗ → '+correct;
+  const lines=[];
+  lines.push('COLEGIO BOSTON FLEXIBLE — EVOLVE UNIT 1 EXAM — CORRECTION');
+  lines.push(`Student: ${stu.first} ${stu.last}. | Version ${stu.v} | ${date}`);
+  lines.push(`Score: ${sc.total}/${G} (${pct}%) | Grade: ${grade}/5.0`);
+  lines.push('─'.repeat(60));
+  VA_DATA.forEach(s=>{
+    lines.push(`VA${s.n}v: "${ans['va-v-'+s.n]||'—'}" ${S(chk(ans['va-v-'+s.n],s.verb),s.verb[0])} | match: "${ans['va-m-'+s.n]||'—'}" ${S(chk(ans['va-m-'+s.n],s.match),s.match)}`);
+  });
+  VB_DATA.forEach(s=>lines.push(`VB${s.n}: "${ans['vb-'+s.n]||'—'}" ${S(chk(ans['vb-'+s.n],s.ans),s.ans[0])}`));
+  VC_DATA.forEach(s=>{
+    lines.push(`VC${s.n}v: "${ans['vc-v-'+s.n]||'—'}" ${S(chk(ans['vc-v-'+s.n],s.verb),s.verb[0])} | match: "${ans['vc-m-'+s.n]||'—'}" ${S(chk(ans['vc-m-'+s.n],s.match),s.match)}`);
+  });
+  VD_DATA.forEach(s=>lines.push(`VD${s.n}: "${ans['vd-'+s.n]||'—'}" ${S(chk(ans['vd-'+s.n],s.ans),s.ans[0])}`));
+  VE_DATA.forEach(q=>lines.push(`VE${q.n}: "${ans['ve-'+q.n]||'—'}" ${S(ans['ve-'+q.n]===q.ans,q.ans)}`));
+  VF_DATA.forEach(q=>lines.push(`VF${q.n}: "${ans['vf-'+q.n]||'—'}" ${S(chk(ans['vf-'+q.n],q.ans),q.ans[0])}`));
+  GA_DATA.forEach(q=>lines.push(`GA${q.n}: "${ans['ga-'+q.n]||'—'}" ${S(chk(ans['ga-'+q.n],q.ans),q.ans[0])}`));
+  GB_DATA.forEach(s=>lines.push(`GB${s.n}: "${ans['gb-'+s.n]||'—'}" ${S(chk(ans['gb-'+s.n],s.ans),s.ans)}`));
+  GC_DATA.forEach(q=>lines.push(`GC${q.n}: "${ans['gc-'+q.n]||'—'}" ${S(chk(ans['gc-'+q.n],q.ans),q.ans[0])}`));
+  GD_DATA.forEach(s=>lines.push(`GD${s.n}: "${ans['gd-'+s.n]||'—'}" ${S(chk(ans['gd-'+s.n],s.ans),s.ans)}`));
+  GE_DATA.forEach(q=>lines.push(`GE${q.n}: "${ans['ge-'+q.n]||'—'}" ${S(ans['ge-'+q.n]===q.ans,q.ans)}`));
+  GF_DATA.forEach(q=>lines.push(`GF${q.n}: "${ans['gf-'+q.n]||'—'}" ${S(chk(ans['gf-'+q.n],q.ans),q.ans[0])}`));
   const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
-  const fname=`Correction_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`;
-  const cap=`📄 ${stu.first} ${stu.last}. | V${stu.v} | ${sc.total}/${G} pts | Grade: ${grade}/5.0`;
-  tgDoc(blob,fname,cap);
+  tgDoc(blob,`Correction_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`,
+    `📄 ${stu.first} ${stu.last}. | V${stu.v} | ${sc.total}/${G} | ${grade}/5.0`);
 }
 
 // ===================== EXIT DETECTION =====================
