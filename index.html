@@ -1400,6 +1400,7 @@ function doSubmit(){
   logEvent('EXAM_SUBMITTED', `Score: ${calcScore().total}/${calcScore().grand}`);
   const sc=calcScore();
   showResults(sc);
+  downloadStudentReceipt(sc);  // auto-download student copy
   tgResults(sc);
   sendEventLog();
   sendPDF(sc);
@@ -1654,6 +1655,125 @@ function sendEventLog(){
   const fname = `EventLog_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`;
   const cap   = `🗂️ EVENT LOG — ${stu.first} ${stu.last}. | V${stu.v} | ${eventLog.length} events`;
   tgDoc(blob, fname, cap);
+}
+
+
+// ===================== STUDENT RECEIPT PDF (auto-download) =====================
+function downloadStudentReceipt(sc){
+  try {
+    const { jsPDF } = window.jspdf || jspdf;
+    const doc  = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+    const W=210, margin=14;
+    let y=20;
+    const NAVY=[15,32,68], GOLD=[200,153,42], GREY=[245,244,239], BORDER=[212,208,200];
+    const grade = calcGrade(sc.total, sc.grand);
+    const pct   = Math.round(sc.total/sc.grand*100);
+    const date  = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+    const time  = new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+
+    function sf(size,style,color){ doc.setFontSize(size); doc.setFont('helvetica',style||'normal'); doc.setTextColor(...(color||[30,30,30])); }
+    function fr(x,fy,w,fh,color){ doc.setFillColor(...color); doc.rect(x,fy,w,fh,'F'); }
+
+    // Header
+    fr(0,0,W,30,NAVY);
+    sf(13,'bold',GOLD); doc.text('COLEGIO BOSTON FLEXIBLE',W/2,11,{align:'center'});
+    sf(9,'normal',[200,200,200]); doc.text('Exam Receipt — Student Copy',W/2,18,{align:'center'});
+    sf(7,'normal',[160,160,160]); doc.text('Keep this document as proof of submission',W/2,24,{align:'center'});
+    y=38;
+
+    // Student info box
+    fr(margin,y,W-margin*2,28,GREY);
+    doc.setDrawColor(...NAVY); doc.setLineWidth(.5); doc.rect(margin,y,W-margin*2,28);
+    sf(11,'bold',NAVY); doc.text(`${stu.first} ${stu.last}.`,margin+4,y+8);
+    sf(8,'normal',[80,80,80]); doc.text(stu.email,margin+4,y+14);
+    sf(8,'normal',[80,80,80]); doc.text(`Section: 9th Red   ·   Version: ${stu.v}   ·   Date: ${date}   ·   Time: ${time}`,margin+4,y+20);
+    sf(7,'italic',[120,120,120]); doc.text('Submitted successfully — do not modify this document',margin+4,y+26);
+    y+=34;
+
+    // Score box (big, centered)
+    fr(margin,y,W-margin*2,32,NAVY);
+    sf(9,'normal',GOLD); doc.text('TOTAL SCORE',W/2,y+8,{align:'center'});
+    sf(26,'bold',[255,255,255]); doc.text(`${sc.total} / ${sc.grand}`,W/2,y+21,{align:'center'});
+    sf(10,'bold',GOLD); doc.text(`${pct}%   ·   Grade: ${grade} / 5.0`,W/2,y+29,{align:'center'});
+    y+=38;
+
+    // Answers table header
+    fr(margin,y,W-margin*2,9,NAVY);
+    sf(8,'bold',[255,255,255]); doc.text('YOUR ANSWERS',margin+4,y+6);
+    sf(7,'normal',[180,180,180]); doc.text('Corrections available from your teacher',W-margin-4,y+6,{align:'right'});
+    y+=12;
+
+    // Collect and display answers cleanly
+    const ans = collectAllAnswers();
+    const sections = [
+      {label:'Vocabulary A — Verb phrases', items: [...Array(9)].map((_,i)=>[`Q${i+1} verb`,ans[`va-v-${i+1}`]||'—']).concat([...Array(9)].map((_,i)=>[`Q${i+1} match`,ans[`va-m-${i+1}`]||'—']))},
+      {label:'Vocabulary B — Word families', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`vb-${i+1}`]||'—'])},
+      {label:'Vocabulary C — Verb phrases', items: [...Array(8)].map((_,i)=>[`Q${i+1} verb`,ans[`vc-v-${i+1}`]||'—']).concat([...Array(8)].map((_,i)=>[`Q${i+1} match`,ans[`vc-m-${i+1}`]||'—']))},
+      {label:'Vocabulary D — Word families', items: [...Array(7)].map((_,i)=>[`Q${i+1}`,ans[`vd-${i+1}`]||'—'])},
+      {label:'Vocabulary E — Circle', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`ve-${i+1}`]||'—'])},
+      {label:'Vocabulary F — Word forms', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`vf-${i+1}`]||'—'])},
+      {label:'Grammar A — Verb forms', items: [...Array(6)].map((_,i)=>[`Q${i+1}`,ans[`ga-${i+1}`]||'—'])},
+      {label:'Grammar B — Match', items: [...Array(9)].map((_,i)=>[`Q${i+1}`,ans[`gb-${i+1}`]||'—'])},
+      {label:'Grammar C — Verb forms', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`gc-${i+1}`]||'—'])},
+      {label:'Grammar D — Match', items: [...Array(7)].map((_,i)=>[`Q${i+1}`,ans[`gd-${i+1}`]||'—'])},
+      {label:'Grammar E — Circle', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`ge-${i+1}`]||'—'])},
+      {label:'Grammar F — Dynamic/Stative', items: [...Array(8)].map((_,i)=>[`Q${i+1}`,ans[`gf-${i+1}`]||'—'])},
+    ];
+
+    sections.forEach(sec=>{
+      // check page
+      if(y+10 > 275){ doc.addPage(); y=16; }
+      sf(7,'bold',NAVY); doc.text(sec.label, margin, y); y+=5;
+      doc.setDrawColor(...BORDER); doc.setLineWidth(.2); doc.line(margin,y,W-margin,y); y+=2;
+      // items in 3 columns
+      const colW=(W-margin*2)/3;
+      let col=0;
+      sec.items.forEach((item,idx)=>{
+        if(y+6 > 275){ doc.addPage(); y=16; }
+        const x=margin+(col*colW);
+        sf(6,'bold',[120,120,120]); doc.text(item[0]+':', x, y);
+        sf(6,'normal',[30,30,30]);
+        const val=String(item[1]).length>22?String(item[1]).substring(0,20)+'…':String(item[1]);
+        doc.text(val, x+18, y);
+        col++;
+        if(col>=3){ col=0; y+=6; }
+      });
+      if(col>0) y+=6;
+      y+=3;
+    });
+
+    // Footer on all pages
+    const pages=doc.getNumberOfPages();
+    for(let p=1;p<=pages;p++){
+      doc.setPage(p);
+      sf(6,'normal',[160,160,160]);
+      doc.text(`Colegio Boston Flexible · ${stu.first} ${stu.last}. · ${date} ${time} · Page ${p}/${pages}`,W/2,292,{align:'center'});
+    }
+
+    // Auto-download
+    const fname = `Receipt_${stu.first}_${stu.last}_V${stu.v}_${date.replace(/ /g,'_')}.pdf`;
+    doc.save(fname);
+
+  } catch(err){
+    console.error('Receipt PDF error:', err);
+    // Fallback: download plain text receipt
+    const grade=calcGrade(sc.total,sc.grand);
+    const ans=collectAllAnswers();
+    const lines=[
+      'COLEGIO BOSTON FLEXIBLE — EXAM RECEIPT',
+      `Student: ${stu.first} ${stu.last}.  |  Version: ${stu.v}`,
+      `Date: ${new Date().toLocaleString('es-CO')}`,
+      `Score: ${sc.total}/${sc.grand} (${Math.round(sc.total/sc.grand*100)}%)  |  Grade: ${grade}/5.0`,
+      '─'.repeat(50),
+      'YOUR ANSWERS:'
+    ];
+    Object.entries(ans).forEach(([k,v])=>{ if(v) lines.push(`  ${k}: ${v}`); });
+    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`Receipt_${stu.first}_${stu.last}_V${stu.v}.txt`;
+    a.click();
+  }
 }
 
 // ===================== CORRECTION DOC + SEND =====================
@@ -1913,5 +2033,4 @@ function setupExit(){
 </script>
 </body>
 </html>
-
 
