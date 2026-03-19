@@ -1392,9 +1392,9 @@ function calcScore(){
   return{vs,vt,gs,gt,total:vs+gs,grand:vt+gt};
 }
 
-function doSubmit(){
+function doSubmit(forced){
   if(submitted) return;
-  if(!confirm('Submit your exam now? You cannot make changes after submitting.')) return;
+  if(!forced && !confirm('Submit your exam now? You cannot make changes after submitting.')) return;
   submitted=true;
   clearInterval(timerInt);
   logEvent('EXAM_SUBMITTED', `Score: ${calcScore().total}/${calcScore().grand}`);
@@ -1480,14 +1480,14 @@ function tgAlert(){
     flashBanner(`⚠️ ADVERTENCIA: No salgas de la ventana del examen. Si lo intentas de nuevo, el examen se cerrará automáticamente, se notificará al profesor y perderás el examen.`, false);
   } else if(alertN>=1){
     // Already warned — close immediately, no debounce needed
-    logEvent('EXIT_ATTEMPT_2_EXAM_CLOSED', `Time left: ${tStr} — Exam locked`);
+    logEvent('EXIT_ATTEMPT_2_EXAM_PAUSED', `Time left: ${tStr} — Exam paused`);
     submitted = true;
     clearInterval(timerInt);
     blacklistAdd(stu.code, `${stu.first} ${stu.last}.`, stu.section||'9thRed', `Intento de trampa #2 — ${tStr} restante`);
     captureScreen('attempt2', `📸 PANTALLA — Intento #2 (EXAMEN CERRADO)\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`, function(){ sendEventLog(); });
-    tg(`🚨 EXAMEN CERRADO POR TRAMPA\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n\n❌ El examen fue cerrado automáticamente por intento de trampa.`);
-    flashBanner(`🚨 Examen cerrado. Se ha notificado al profesor. Has perdido el examen por intentar salir de la ventana.`, true);
-    setTimeout(()=>lockExam(), 3500);
+    tg(`⏸️ EXAMEN PAUSADO — TRAMPA #2\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n\n❌ El examen fue cerrado automáticamente por intento de trampa.`);
+    flashBanner(`⏸️ Examen pausado. Notifica a tu profesor inmediatamente.`, true);
+    pauseExam(tStr);
     return;
   }
 
@@ -2020,6 +2020,68 @@ function sendPDFfallback(sc, ans, grade, pct, date, G){
   const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
   tgDoc(blob,`Correction_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`,
     `📄 ${stu.first} ${stu.last}. | V${stu.v} | ${sc.total}/${G} | ${grade}/5.0`);
+}
+
+
+// ===================== PAUSE / UNLOCK SYSTEM =====================
+const UNLOCK_CODE = "BOSTON2026";
+let paused = false;
+
+function pauseExam(tStr){
+  paused = true;
+  clearInterval(timerInt);
+
+  // Freeze all inputs
+  document.querySelectorAll('input,select,button').forEach(function(el){
+    if(el.id==='unlock-inp') return;
+    el.disabled = true;
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '0.5';
+  });
+
+  document.getElementById('submit-bar').classList.remove('active');
+
+  var overlay = document.createElement('div');
+  overlay.id = 'pause-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,32,68,0.97);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;flex-direction:column;text-align:center;';
+  overlay.innerHTML =
+    '<div style="max-width:420px;width:100%;">'
+    + '<div style="font-size:3rem;margin-bottom:16px;">\u23F8\uFE0F</div>'
+    + '<div style="font-size:1.4rem;font-weight:700;color:#c8992a;margin-bottom:10px;">Examen Pausado</div>'
+    + '<div style="font-size:.92rem;color:rgba(255,255,255,.85);line-height:1.65;margin-bottom:20px;">'
+    + 'Tu examen ha sido pausado porque intentaste salir de la ventana.<br><br>'
+    + '<strong style="color:#fca5a5;">Tus respuestas han sido conservadas.</strong><br><br>'
+    + 'Levanta la mano y notifica a tu profesor. El ingresara el codigo para que puedas entregar lo que llevas.'
+    + '</div>'
+    + '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px;margin-bottom:16px;">'
+    + '<div style="font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Codigo del Profesor</div>'
+    + '<input id="unlock-inp" type="password" style="width:100%;padding:12px;border:2px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:1.1rem;text-align:center;letter-spacing:.15em;outline:none;font-family:monospace;" placeholder="Ingresa el codigo" oninput="tryUnlock()">'
+    + '<div id="unlock-err" style="color:#fca5a5;font-size:.78rem;margin-top:8px;min-height:18px;"></div>'
+    + '</div>'
+    + '<div style="font-size:.72rem;color:rgba(255,255,255,.3);">Tiempo restante al pausar: ' + tStr + '</div>'
+    + '</div>';
+  document.body.appendChild(overlay);
+  setTimeout(function(){ var i=document.getElementById('unlock-inp'); if(i)i.focus(); }, 300);
+}
+
+function tryUnlock(){
+  var inp = document.getElementById('unlock-inp');
+  var err = document.getElementById('unlock-err');
+  if(!inp) return;
+  var val = inp.value.trim().toUpperCase();
+  if(val === UNLOCK_CODE){
+    var ov = document.getElementById('pause-overlay');
+    if(ov) ov.parentNode.removeChild(ov);
+    logEvent('TEACHER_UNLOCKED','Teacher entered unlock code — auto-submitting');
+    tg('\uD83D\uDD13 CODIGO INGRESADO POR PROFESOR\n\uD83D\uDC64 ' + stu.first + ' ' + stu.last + '.\n\uD83D\uDCCB Version ' + stu.v + '\n\n\u26A1 Enviando examen con respuestas registradas...');
+    setTimeout(function(){
+      submitted = false;
+      doSubmit(true);
+    }, 1500);
+  } else if(val.length >= UNLOCK_CODE.length){
+    err.textContent = 'Codigo incorrecto. Intentalo de nuevo.';
+    inp.value = '';
+  }
 }
 
 // ===================== EXIT DETECTION =====================
