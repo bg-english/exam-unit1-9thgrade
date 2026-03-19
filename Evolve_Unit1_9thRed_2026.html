@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<title>Evolve Unit 1 Exam - 9th Red - Boston 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ===== CSS CUSTOM PROPERTIES (with IE fallbacks inline where needed) ===== */
+:root {
+  --navy:   #0f2044;
+  --gold:   #c8992a;
+  --green:  #16a34a;
+  --red:    #dc2626;
+  --bg:     #f5f4ef;
+  --white:  #ffffff;
+  --border: #d4d0c8;
+  --text:   #1a1a1a;
+  --muted:  #6b7280;
+  --blue:   #1e40af;
+  --purple: #6d28d9;
+}
+
+/* ===== RESET & BASE ===== */
+html { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+               Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  background: #f5f4ef;
+  background: var(--bg);
+  color: #1a1a1a;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ===== LOGIN SCREEN ===== */
+#login-screen {
+  min-height: 100vh;
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -webkit-box-pack: center; -ms-flex-pack: center; justify-content: center;
+  background: #0f2044; background: var(--navy);
+  padding: 16px;
+}
+.login-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 32px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  -webkit-box-shadow: 0 8px 40px rgba(0,0,0,.45);
+  box-shadow: 0 8px 40px rgba(0,0,0,.45);
+}
+.login-logo  { font-size: .7rem; font-weight: 700; letter-spacing: .15em; color: #0f2044; color: var(--navy); text-transform: uppercase; margin-bottom: 8px; opacity: .55; }
+.login-title { font-size: 1.65rem; font-weight: 700; color: #0f2044; color: var(--navy); margin-bottom: 4px; }
+.login-sub   { font-size: .85rem; color: #6b7280; color: var(--muted); margin-bottom: 24px; }
+#login-err   { color: #dc2626; color: var(--red); font-size: .82rem; margin-bottom: 10px; min-height: 20px; }
+
+/* Inputs — font-size 16px prevents iOS auto-zoom */
+.login-input {
+  display: block;
+  width: 100%;
+  padding: 13px 14px;
+  border: 2px solid #d4d0c8; border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  -webkit-transition: border-color .2s; transition: border-color .2s;
+  background: #fff;
+  color: #1a1a1a;
+}
+.login-input:focus { border-color: #0f2044; border-color: var(--navy); }
+.login-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: #0f2044; background: var(--navy);
+  color: #c8992a; color: var(--gold);
+  border: none; border-radius: 8px;
+  font-size: 1rem; font-weight: 700; font-family: inherit;
+  cursor: pointer;
+  letter-spacing: .04em;
+  margin-top: 8px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 48px;
+}
+.login-btn:hover, .login-btn:active { opacity: .88; }
+
+/* ===== TIMER BAR ===== */
+#timer-bar {
+  display: none;
+  background: #0f2044; background: var(--navy);
+  padding: 8px 16px;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between;
+  position: -webkit-sticky; position: sticky;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  -webkit-box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+#timer-bar.active { display: -webkit-box; display: -ms-flexbox; display: flex; }
+.tbar-left { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
+.tbar-label { color: rgba(255,255,255,.45); font-size: .65rem; text-transform: uppercase; letter-spacing: .09em; display: block; }
+#timer-display { font-size: 1.3rem; font-weight: 700; color: #c8992a; color: var(--gold); letter-spacing: .05em; }
+#timer-display.warn { color: #ff6b6b; -webkit-animation: pulse 1s infinite; animation: pulse 1s infinite; }
+@-webkit-keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+@keyframes        pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+#student-info { color: rgba(255,255,255,.82); font-size: .78rem; text-align: right; max-width: 55%; word-break: break-word; }
+.ver-badge {
+  display: inline-block;
+  background: #c8992a; background: var(--gold);
+  color: #0f2044; color: var(--navy);
+  font-size: .65rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 10px; margin-left: 5px;
+}
+
+/* ===== EXAM SCREEN ===== */
+#exam-screen {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 12px 110px;
+  width: 100%;
+}
+
+/* ===== TABS ===== */
+.tab-row {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -ms-flex-wrap: wrap; flex-wrap: wrap;
+  gap: 8px; margin-bottom: 18px;
+}
+/* gap fallback for old browsers */
+.tab-row > * { margin-right: 8px; margin-bottom: 8px; }
+.tab-btn {
+  padding: 11px 22px;
+  border: 2px solid #0f2044; border: 2px solid var(--navy);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f2044; color: var(--navy);
+  font-size: .9rem; font-weight: 600; font-family: inherit;
+  cursor: pointer;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-transition: background .15s, color .15s; transition: background .15s, color .15s;
+}
+.tab-btn.active  { background: #0f2044; background: var(--navy); color: #c8992a; color: var(--gold); }
+.tab-btn:hover   { opacity: .85; }
+.tab-panel       { display: none; }
+.tab-panel.active{ display: block; }
+
+/* ===== SECTION CARD ===== */
+.sc {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d4d0c8; border: 1px solid var(--border);
+  padding: 20px 16px;
+  margin-bottom: 18px;
+  -webkit-box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  box-shadow: 0 2px 6px rgba(0,0,0,.04);
+}
+.sc-head {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: flex-start; -ms-flex-align: flex-start; align-items: flex-start;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 2px solid #f5f4ef; border-bottom: 2px solid var(--bg);
+}
+.sc-letter {
+  width: 36px; height: 36px; min-width: 36px;
+  background: #0f2044; background: var(--navy);
+  color: #c8992a; color: var(--gold);
+  border-radius: 8px;
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -webkit-box-pack: center; -ms-flex-pack: center; justify-content: center;
+  font-weight: 700; font-size: 1rem;
+  margin-right: 12px; -ms-flex-negative: 0; flex-shrink: 0;
+}
+.sc-title { font-weight: 700; font-size: .92rem; color: #0f2044; color: var(--navy); line-height: 1.4; }
+.sc-pts   { font-size: .72rem; color: #6b7280; color: var(--muted); margin-top: 2px; }
+.instr {
+  background: #eef3ff;
+  border: 1px solid #c0d4f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: .82rem;
+  color: #1e40af; color: var(--blue);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+
+/* ===== WORD BANK ===== */
+.wb {
+  background: #fafaf2;
+  border: 1.5px dashed #c8992a; border: 1.5px dashed var(--gold);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.wb-lbl   { font-size: .68rem; font-weight: 700; color: #6b7280; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.wb-words { font-size: .87rem; color: #0f2044; color: var(--navy); font-weight: 500; line-height: 1.65; }
+
+/* ===== QUESTION ROW ===== */
+.qr {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: flex-start; -ms-flex-align: flex-start; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f4ef; border-bottom: 1px solid var(--bg);
+}
+.qr:last-child { border-bottom: none; }
+.qnum  { width: 24px; min-width: 24px; font-size: .78rem; font-weight: 700; color: #c8992a; color: var(--gold); padding-top: 3px; -ms-flex-negative: 0; flex-shrink: 0; }
+.qbody { -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 0; }
+.qtxt  { font-size: .9rem; color: #333; line-height: 1.7; }
+
+/* Fill-in inputs — 16px prevents iOS zoom */
+.fill-inp {
+  display: inline-block;
+  width: 120px;
+  padding: 4px 6px;
+  border: none;
+  border-bottom: 2.5px solid #0f2044; border-bottom: 2.5px solid var(--navy);
+  background: transparent;
+  font-size: 16px; font-family: inherit;
+  color: #0f2044; color: var(--navy);
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+  margin: 0 3px;
+  outline: none;
+  -webkit-appearance: none; appearance: none;
+  max-width: 40vw;
+}
+.fill-inp.wide { width: 180px; max-width: 55vw; }
+
+/* ===== MATCH ROW ===== */
+.mr {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -ms-flex-wrap: wrap; flex-wrap: wrap;
+  padding: 9px 0;
+  border-bottom: 1px solid #f5f4ef; border-bottom: 1px solid var(--bg);
+}
+.mr:last-child { border-bottom: none; }
+.mnum  { width: 24px; min-width: 24px; font-size: .78rem; font-weight: 700; color: #c8992a; color: var(--gold); -ms-flex-negative: 0; flex-shrink: 0; }
+.mtext { font-size: .88rem; -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 120px; line-height: 1.45; padding-right: 8px; }
+/* Select — full-width on mobile, max 300px on wide screens */
+.mselect {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 12px;
+  border: 2px solid #d4d0c8; border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px; font-family: inherit;
+  color: #0f2044; color: var(--navy);
+  background: #ffffff;
+  outline: none;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230f2044' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+  cursor: pointer;
+  min-height: 44px;
+  margin-top: 4px;
+}
+.mselect:focus { border-color: #0f2044; border-color: var(--navy); }
+
+/* ===== OPTIONS BOX ===== */
+.opts-box { background: #f9f7f1; border: 1px solid #d4d0c8; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 14px; }
+.opts-lbl { font-size: .68rem; font-weight: 700; color: #6b7280; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.opt-item { font-size: .83rem; color: #444; padding: 2px 0; line-height: 1.5; }
+
+/* ===== RADIO / CIRCLE ===== */
+.rg {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -ms-flex-wrap: wrap; flex-wrap: wrap;
+  margin-top: 8px;
+}
+.rg > .ropt { margin-right: 8px; margin-bottom: 8px; }
+.ropt {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  padding: 9px 14px;
+  border: 2px solid #d4d0c8; border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .88rem; font-family: inherit;
+  -webkit-transition: background .12s; transition: background .12s;
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 44px;
+  background: #fff;
+}
+.ropt input { margin-right: 6px; cursor: pointer; }
+.ropt:hover { background: #f0f4ff; }
+.ropt.sel   { background: #0f2044; background: var(--navy); color: #ffffff; border-color: #0f2044; border-color: var(--navy); }
+
+/* ===== DYNAMIC / STATIVE ===== */
+.dsr {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -ms-flex-wrap: wrap; flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f4ef; border-bottom: 1px solid var(--bg);
+}
+.dsr:last-child { border-bottom: none; }
+.dsnum   { width: 24px; min-width: 24px; font-size: .78rem; font-weight: 700; color: #c8992a; color: var(--gold); -ms-flex-negative: 0; flex-shrink: 0; }
+.dstext  { font-size: .88rem; -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 160px; line-height: 1.55; padding-right: 8px; }
+.dstext u{ text-decoration: underline; font-weight: 600; }
+.ds-btns { display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-negative: 0; flex-shrink: 0; margin-top: 4px; }
+.ds-btns > .ds-btn { margin-right: 7px; }
+.ds-btn {
+  padding: 9px 14px;
+  border: 2px solid #d4d0c8; border: 2px solid var(--border);
+  border-radius: 7px;
+  font-size: .82rem; font-weight: 600; font-family: inherit;
+  cursor: pointer;
+  background: #ffffff;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-transition: background .12s; transition: background .12s;
+}
+.ds-btn:hover { background: #f0f4ff; }
+.ds-d.on  { background: #1e40af; background: var(--blue);   color: #fff; border-color: #1e40af; border-color: var(--blue); }
+.ds-s.on  { background: #6d28d9; background: var(--purple); color: #fff; border-color: #6d28d9; border-color: var(--purple); }
+
+/* ===== WORD FORMS (Vocab F) ===== */
+.wf-row {
+  display: -webkit-box; display: -ms-flexbox; display: flex;
+  -webkit-box-align: flex-start; -ms-flex-align: flex-start; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f4ef; border-bottom: 1px solid var(--bg);
+}
+.wf-row:last-child { border-bottom: none; }
+.wf-num    { width: 24px; min-width: 24px; font-size: .78rem; font-weight: 700; color: #c8992a; color: var(--gold); padding-top: 3px; -ms-flex-negative: 0; flex-shrink: 0; }
+.wf-body   { -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 0; }
+.wf-given  { font-size: .87rem; color: #555; margin-bottom: 5px; }
+.wf-target { font-size: .87rem; color: #333; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; -ms-flex-wrap: wrap; flex-wrap: wrap; }
+
+/* ===== SUBMIT BAR ===== */
+#submit-bar {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #ffffff;
+  border-top: 2px solid #d4d0c8; border-top: 2px solid var(--border);
+  padding: 10px 16px;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between;
+  z-index: 50;
+  -webkit-box-shadow: 0 -4px 12px rgba(0,0,0,.09);
+  box-shadow: 0 -4px 12px rgba(0,0,0,.09);
+  /* Safe area for iPhone notch */
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+#submit-bar.active { display: -webkit-box; display: -ms-flexbox; display: flex; }
+.sb-info { font-size: .78rem; color: #6b7280; color: var(--muted); -webkit-box-flex: 1; -ms-flex: 1; flex: 1; padding-right: 12px; }
+.sb-btn {
+  padding: 12px 20px;
+  background: #16a34a; background: var(--green);
+  color: #ffffff;
+  border: none; border-radius: 10px;
+  font-size: .95rem; font-weight: 700; font-family: inherit;
+  cursor: pointer;
+  min-height: 48px;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.sb-btn:hover, .sb-btn:active { opacity: .88; }
+
+/* ===== RESULTS MODAL ===== */
+#res-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 200;
+  -webkit-box-align: center; -ms-flex-align: center; align-items: center;
+  -webkit-box-pack: center; -ms-flex-pack: center; justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+#res-overlay.active { display: -webkit-box; display: -ms-flexbox; display: flex; }
+.res-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 20px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  -webkit-box-shadow: 0 8px 48px rgba(0,0,0,.45);
+  box-shadow: 0 8px 48px rgba(0,0,0,.45);
+  margin: auto;
+}
+.res-title  { font-size: 1.35rem; font-weight: 700; color: #0f2044; color: var(--navy); margin-bottom: 6px; }
+.res-sub    { font-size: .82rem; color: #6b7280; color: var(--muted); margin-bottom: 16px; }
+.score-big  { font-size: 2.8rem; font-weight: 700; color: #0f2044; color: var(--navy); margin: 12px 0 4px; }
+.score-pct  { font-size: 1rem; color: #6b7280; color: var(--muted); margin-bottom: 16px; }
+.score-grid { display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; margin: 0 -5px 16px; }
+.si { -webkit-box-flex: 1; -ms-flex: 1 1 120px; flex: 1 1 120px; background: #f5f4ef; background: var(--bg); border-radius: 10px; padding: 12px; border: 1px solid #d4d0c8; border: 1px solid var(--border); margin: 5px; }
+.si-lbl { font-size: .7rem; color: #6b7280; color: var(--muted); margin-bottom: 3px; }
+.si-val { font-size: 1.25rem; font-weight: 700; color: #0f2044; color: var(--navy); }
+.res-note  { font-size: .78rem; color: #999; margin-bottom: 16px; }
+.res-close {
+  padding: 12px 32px;
+  background: #0f2044; background: var(--navy);
+  color: #c8992a; color: var(--gold);
+  border: none; border-radius: 8px;
+  font-size: .92rem; font-weight: 700; font-family: inherit;
+  cursor: pointer;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== ALERT BANNER ===== */
+#alert-banner {
+  display: none;
+  position: fixed;
+  top: 62px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  background: #dc2626;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 600;
+  z-index: 150;
+  -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  width: 90%;
+  max-width: 520px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* --- Small phones (≤ 360px) --- */
+@media (max-width: 360px) {
+  .login-card        { padding: 24px 16px; }
+  .login-title       { font-size: 1.45rem; }
+  .sc                { padding: 14px 12px; }
+  .fill-inp          { width: 90px; }
+  .fill-inp.wide     { width: 130px; }
+  .mselect           { font-size: 14px; }
+  .ds-btn            { padding: 8px 10px; font-size: .78rem; }
+  #timer-display     { font-size: 1.1rem; }
+}
+
+/* --- Phones (≤ 480px) --- */
+@media (max-width: 480px) {
+  #exam-screen       { padding: 12px 8px 120px; }
+  .sc                { padding: 16px 12px; border-radius: 10px; }
+  .tab-btn           { padding: 10px 16px; font-size: .85rem; }
+  .mtext             { width: 100%; min-width: 0; }
+  .mr                { display: block; }
+  .mnum              { display: inline-block; margin-bottom: 2px; }
+  .mselect           { margin-top: 6px; max-width: 100%; }
+  .dsr               { display: block; }
+  .dsnum             { display: inline; }
+  .dstext            { display: block; margin-bottom: 8px; }
+  .ds-btns           { display: -webkit-box; display: -ms-flexbox; display: flex; }
+  .ropt              { font-size: .85rem; padding: 8px 12px; }
+  .sb-info           { font-size: .72rem; }
+  .sb-btn            { padding: 11px 14px; font-size: .88rem; }
+  .score-big         { font-size: 2.4rem; }
+  .res-card          { padding: 22px 16px; }
+}
+
+/* --- Tablets (481px – 768px) --- */
+@media (min-width: 481px) and (max-width: 768px) {
+  #exam-screen       { padding: 16px 12px 110px; }
+  .mselect           { max-width: 260px; }
+}
+
+/* --- Wide screens (≥ 900px) --- */
+@media (min-width: 900px) {
+  .login-card        { padding: 44px 40px; }
+  #exam-screen       { padding: 24px 20px 100px; }
+  .sc                { padding: 26px 24px; }
+  .fill-inp          { width: 140px; }
+  .fill-inp.wide     { width: 200px; }
+}
+
+/* ===== PRINT — hide chrome ===== */
+@media print {
+  #timer-bar, #submit-bar, #alert-banner, .tab-row { display: none !important; }
+  .tab-panel { display: block !important; }
+  .sc { -webkit-box-shadow: none; box-shadow: none; border: 1px solid #ccc; }
+  body { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ======= LOGIN ======= -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Colegio Boston Flexible · 2026</div>
+    <div class="login-title">Unit 1 Exam</div>
+    <div class="login-sub">Evolve 4 &nbsp;·&nbsp; 9th Red &nbsp;·&nbsp; Language Arts</div>
+    <div id="login-err"></div>
+    <input id="inp-email" class="login-input" type="email" placeholder="your.email@redboston.edu.co"
+      autocapitalize="none" autocorrect="off" autocomplete="email">
+    <input id="inp-code" class="login-input" type="text" placeholder="Exam code (from teacher)"
+      inputmode="numeric" autocomplete="off" style="margin-bottom:20px;">
+    <button class="login-btn" onclick="doLogin()">Start Exam &rarr;</button>
+  </div>
+</div>
+
+<!-- ======= TIMER BAR ======= -->
+<div id="timer-bar">
+  <div class="tbar-left">
+    <div>
+      <div class="tbar-label">Time Remaining</div>
+      <div id="timer-display">75:00</div>
+    </div>
+  </div>
+  <div id="student-info">—</div>
+</div>
+
+<!-- ======= ALERT BANNER ======= -->
+<div id="alert-banner" id="alert-banner"></div>
+
+<!-- ======= CAMERA (hidden) ======= -->
+<video id="cam-video" style="display:none;position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;" playsinline autoplay muted></video>
+<canvas id="cam-canvas" style="display:none;position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;"></canvas>
+
+<!-- ======= EXAM SCREEN ======= -->
+<div id="exam-screen">
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="showTab('vocab',this)">📚 Vocabulary</button>
+    <button class="tab-btn" onclick="showTab('grammar',this)">✏️ Grammar</button>
+  </div>
+
+  <!-- ===== VOCABULARY TAB ===== -->
+  <div id="tab-vocab" class="tab-panel active">
+
+    <!-- VOCAB A -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">A</div>
+        <div><div class="sc-title">Complete the sentences with the correct form of the verbs below. Then match each sentence with the correct ending.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="wb"><div class="wb-lbl">Word Bank</div><div class="wb-words">break &nbsp;|&nbsp; face &nbsp;|&nbsp; get &nbsp;|&nbsp; have &nbsp;|&nbsp; rise &nbsp;|&nbsp; run &nbsp;|&nbsp; take &nbsp;|&nbsp; tell &nbsp;|&nbsp; work</div></div>
+      <div id="va-qs"></div>
+      <div class="opts-box" id="va-opts-box"><div class="opts-lbl">Options</div><div id="va-opts"></div></div>
+    </div>
+
+    <!-- VOCAB B -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">B</div>
+        <div><div class="sc-title">Complete the sentences. Use eight of the words below.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="wb"><div class="wb-lbl">Word Bank</div><div class="wb-words" id="vb-wb"></div></div>
+      <div id="vb-qs"></div>
+    </div>
+
+    <!-- VOCAB C -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">C</div>
+        <div><div class="sc-title">Complete the sentences with the correct form of the verbs below. Then match each sentence with the correct ending.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="wb"><div class="wb-lbl">Word Bank</div><div class="wb-words">break &nbsp;|&nbsp; face &nbsp;|&nbsp; have &nbsp;|&nbsp; run &nbsp;|&nbsp; set &nbsp;|&nbsp; take &nbsp;|&nbsp; win &nbsp;|&nbsp; work</div></div>
+      <div id="vc-qs"></div>
+      <div class="opts-box" id="vc-opts-box"><div class="opts-lbl">Options</div><div id="vc-opts"></div></div>
+    </div>
+
+    <!-- VOCAB D -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">D</div>
+        <div><div class="sc-title">Complete the sentences. Use seven of the words below.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="wb"><div class="wb-lbl">Word Bank</div><div class="wb-words" id="vd-wb"></div></div>
+      <div id="vd-qs"></div>
+    </div>
+
+    <!-- VOCAB E -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">E</div>
+        <div><div class="sc-title">Circle the correct answer.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="ve-qs"></div>
+    </div>
+
+    <!-- VOCAB F -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">F</div>
+        <div><div class="sc-title">Write the noun or adjective form as indicated.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="instr">Example — Noun: <strong>success</strong> &nbsp;→&nbsp; Adjective: <em>successful</em></div>
+      <div id="vf-qs"></div>
+    </div>
+
+  </div><!-- end vocab tab -->
+
+  <!-- ===== GRAMMAR TAB ===== -->
+  <div id="tab-grammar" class="tab-panel">
+
+    <!-- GRAMMAR A -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">A</div>
+        <div><div class="sc-title">Write the correct form of the verbs in parentheses.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="ga-qs"></div>
+    </div>
+
+    <!-- GRAMMAR B -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">B</div>
+        <div><div class="sc-title">Match the sentence halves.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="gb-qs"></div>
+    </div>
+
+    <!-- GRAMMAR C -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">C</div>
+        <div><div class="sc-title">Write the correct form of the verbs in parentheses.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="gc-qs"></div>
+    </div>
+
+    <!-- GRAMMAR D -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">D</div>
+        <div><div class="sc-title">Match the sentence halves.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="gd-qs"></div>
+    </div>
+
+    <!-- GRAMMAR E -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">E</div>
+        <div><div class="sc-title">Circle the correct answer.</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div id="ge-qs"></div>
+    </div>
+
+    <!-- GRAMMAR F -->
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-letter">F</div>
+        <div><div class="sc-title">Is the underlined verb Dynamic or Stative?</div><div class="sc-pts">1 point each</div></div>
+      </div>
+      <div class="instr">Dynamic verbs = actions or processes (can use continuous form). Stative verbs = states/conditions (do NOT normally use continuous form).</div>
+      <div id="gf-qs"></div>
+    </div>
+
+  </div><!-- end grammar tab -->
+</div><!-- end exam-screen -->
+
+<!-- ======= SUBMIT BAR ======= -->
+<div id="submit-bar">
+  <div class="sb-info" id="sb-info">Answer all questions, then submit.</div>
+  <button class="sb-btn" onclick="doSubmit()">Submit Exam ✓</button>
+</div>
+
+<!-- ======= RESULTS MODAL ======= -->
+<div id="res-overlay">
+  <div class="res-card">
+    <div class="res-title">📋 Exam Submitted</div>
+    <div class="res-sub" id="res-name"></div>
+    <div class="score-big" id="res-score">—</div>
+    <div class="score-pct" id="res-pct"></div>
+    <div class="score-grid">
+      <div class="si"><div class="si-lbl">Vocabulary</div><div class="si-val" id="r-voc">—</div></div>
+      <div class="si"><div class="si-lbl">Grammar</div><div class="si-val" id="r-gr">—</div></div>
+    </div>
+    <div class="res-note">Your teacher will review your results.</div>
+    <button class="res-close" onclick="document.getElementById('res-overlay').classList.remove('active')">Close</button>
+  </div>
+</div>
+
+<script>
+// ===================== CONFIG =====================
+const BOT   = '8754242203:AAEITse9YsrS6_MJbtWAXctJFZZX7FDnCyM';
+const CID   = '2041749428';
+const MINS  = 75;
+
+// ===================== STUDENTS =====================
+const STUDENTS = {
+  'sebastianaalarcon@redboston.edu.co': {code:'10001',first:'Sebastian', last:'A',v:1},
+  'victoriaarbelaz@redboston.edu.co':  {code:'20001',first:'Victoria',  last:'A',v:2},
+  'sophiabarros@redboston.edu.co':     {code:'10002',first:'Sophia',    last:'B',v:1},
+  'sofiacardenasb@redboston.edu.co':   {code:'20002',first:'Sofia',     last:'C',v:2},
+  'lucianacarrillo@redboston.edu.co':  {code:'10003',first:'Luciana',   last:'C',v:1},
+  'marilynchaparro@redboston.edu.co':  {code:'20003',first:'Marilyn',   last:'C',v:2},
+  'andresfdiaz@redboston.edu.co':      {code:'10004',first:'Andres',    last:'D',v:1},
+  'sophieescobar@redboston.edu.co':    {code:'20004',first:'Sophie',    last:'E',v:2},
+  'juangarcia@redboston.edu.co':       {code:'10005',first:'Juan',      last:'G',v:1},
+  'mathiasibanez@redboston.edu.co':    {code:'20005',first:'Matias',    last:'I',v:2},
+  'matiasinsignares@redboston.edu.co': {code:'10006',first:'Matias',    last:'I',v:1},
+  'migueljimenez@redboston.edu.co':    {code:'20006',first:'Miguel',    last:'J',v:2},
+  'emalaver@redboston.edu.co':         {code:'10007',first:'Elizabeth', last:'M',v:1},
+  'dannamedina@redboston.edu.co':      {code:'20007',first:'Danna',     last:'M',v:2},
+  'karlamedina@redboston.edu.co':      {code:'10008',first:'Karla',     last:'M',v:1},
+  'estebanmunoz@redboston.edu.co':     {code:'20008',first:'Esteban',   last:'M',v:2},
+  'mariananigro@redboston.edu.co':     {code:'10009',first:'Mariana',   last:'N',v:1},
+  'danielpinto@redboston.edu.co':      {code:'20009',first:'Daniel',    last:'P',v:2},
+  'eliasquintero@redboston.edu.co':    {code:'10010',first:'Elias',     last:'Q',v:1},
+  'keyrohenez@redboston.edu.co':       {code:'20010',first:'Key',       last:'R',v:2},
+  'sofiasaavedra@redboston.edu.co':    {code:'10011',first:'Sofia',     last:'S',v:1},
+  'juansanchez@redboston.edu.co':      {code:'20011',first:'Juan',      last:'S',v:2},
+  'mateosarmiento@redboston.edu.co':   {code:'10012',first:'Mateo',     last:'S',v:1},
+  'sofiavitola@redboston.edu.co':      {code:'20012',first:'Sofia',     last:'V',v:2},
+  'alejandroyepes@redboston.edu.co':   {code:'10013',first:'Alejandro', last:'Y',v:1},
+};
+
+// ===================== QUESTION DATA =====================
+const VA_DATA = [
+  {n:1, txt:"Everyone laughed when you",          verb:['told'],    match:"a joke!"},
+  {n:2, txt:"Gustavo likes building things and",  verb:['working'], match:"with his hands."},
+  {n:3, txt:"I know you're scared, but if you",   verb:['face'],    match:"your fears, you'll feel better."},
+  {n:4, txt:"She isn't an employee. She",          verb:['runs'],    match:"a business in the city."},
+  {n:5, txt:"We weren't fast enough to",           verb:['break'],   match:"the record. We'll try again!"},
+  {n:6, txt:"You're so funny! You",               verb:['have'],    match:"a great sense of humor."},
+  {n:7, txt:"When things are difficult, try to",  verb:['rise'],    match:"to the challenges and succeed."},
+  {n:8, txt:"That was an excellent post! It",     verb:['got'],     match:"a lot of likes, didn't it?"},
+  {n:9, txt:"You're good at drawing. You should", verb:['take'],    match:"pride in your art."},
+];
+const VA_OPTS_V1=["a lot of likes, didn't it?","to the challenges and succeed.","a business in the city.","a joke!","a great sense of humor.","with his hands.","pride in your art.","your fears, you'll feel better.","the record. We'll try again!"];
+const VA_OPTS_V2=["a joke!","a great sense of humor.","with his hands.","pride in your art.","to the challenges and succeed.","your fears, you'll feel better.","a lot of likes, didn't it?","the record. We'll try again!","a business in the city."];
+
+const VB_DATA = [
+  {n:1, txt:"Job interviews are difficult for me because I'm very quiet and I don't really believe in my own abilities. I don't have a lot of ___ .", ans:['confidence']},
+  {n:2, txt:"They worked hard on the project and it was a great ___ !", ans:['success']},
+  {n:3, txt:"Do you have enough education and training to do that job? Are you ___ to apply for it?", ans:['qualified']},
+  {n:4, txt:"Be friendly and don't shout at people. ___ is a very important quality.", ans:['politeness']},
+  {n:5, txt:"Raquel is an honest person who never lies. She's always ___ .", ans:['truthful']},
+  {n:6, txt:"It's nice to work on a team, but it's good to make your own decisions and be ___ , too.", ans:['independent']},
+  {n:7, txt:"Your little sister asks a lot of questions about everything! She's very ___ !", ans:['curious']},
+  {n:8, txt:"He writes stories and builds websites. He has lots of great ideas, which show his ___ .", ans:['creativity']},
+];
+const VB_WB_V1="successful | creative | independent | truthfulness | curiosity | qualification | truthful | confidence | polite | qualified | politeness | curious | confident | success | independence | creativity";
+const VB_WB_V2="success | creative | truthfulness | qualification | creativity | independent | curious | politeness | confident | truthful | curiosity | successful | polite | qualified | confidence | independence";
+
+const VC_DATA = [
+  {n:1, txt:"I want to buy a good phone, so I've",         verb:['set'],   match:"myself a goal to save $500."},
+  {n:2, txt:"Last week in the cooking competition, she",   verb:['won'],   match:"a medal for her apple pie."},
+  {n:3, txt:"My uncles make beautiful furniture. They",    verb:['work'],  match:"with their hands every day."},
+  {n:4, txt:"Let's be brave and",                          verb:['face'],  match:"our fears."},
+  {n:5, txt:"We trained for a long time before we",        verb:['ran'],   match:"a marathon."},
+  {n:6, txt:"I don't get angry. I",                        verb:['take'],  match:"pride in my ability to stay calm."},
+  {n:7, txt:"She never laughs! She doesn't",               verb:['have'],  match:"a sense of humor at all."},
+  {n:8, txt:"He was the first person to swim so far, and he", verb:['broke'], match:"a swimming record!"},
+];
+const VC_OPTS_V1=["with their hands every day.","a sense of humor at all.","a swimming record!","myself a goal to save $500.","a medal for her apple pie.","a marathon.","our fears.","pride in my ability to stay calm."];
+const VC_OPTS_V2=["our fears.","a marathon.","myself a goal to save $500.","a sense of humor at all.","a swimming record!","with their hands every day.","a medal for her apple pie.","pride in my ability to stay calm."];
+
+const VD_DATA = [
+  {n:1, txt:"Alex is perfect for that job! I'm not surprised that his application was ___ .", ans:['successful']},
+  {n:2, txt:"They don't enjoy challenges. They want an easy job because they don't have any ___ to do better.", ans:['ambition']},
+  {n:3, txt:"Don't lie about anything on the application form. ___ is more important than experience.", ans:['truthfulness']},
+  {n:4, txt:"If your employees show you that they can do lots of things on their own, give them more ___ in their role.", ans:['independence']},
+  {n:5, txt:"You can always trust Olga to do what you ask because she's a ___ person who takes her work seriously.", ans:['responsible']},
+  {n:6, txt:"It's good to ask lots of questions. ___ is an important quality.", ans:['curiosity']},
+  {n:7, txt:"She doesn't need training because she's done computer coding for two years already. She's more ___ than the other candidates.", ans:['experienced']},
+];
+const VD_WB_V1="ambitious | experienced | successful | curiosity | curious | responsible | independent | truthfulness | success | ambition | truthful | independence | responsibility | experience";
+const VD_WB_V2="responsible | independence | truthfulness | independent | ambitious | successful | truthful | responsibility | curious | experience | ambition | success | experienced | curiosity";
+
+const VE_DATA = [
+  {n:1, txt:"Sometimes it can be challenging to ___ your own business.",            opts:["run","get"],    ans:"run"},
+  {n:2, txt:"My boyfriend Clarke ___ a great sense of humor.",                      opts:["tells","has"],  ans:"has"},
+  {n:3, txt:"I'm not very good at ___ jokes. People never laugh at them.",          opts:["telling","getting"], ans:"telling"},
+  {n:4, txt:"My cousin ___ a medal in the Olympics.",                               opts:["won","broke"],  ans:"won"},
+  {n:5, txt:"In order to achieve great things, you need to ___ goals for yourself.",opts:["set","get"],   ans:"set"},
+  {n:6, txt:"My boyfriend really ___ to the challenge and passed his driving test the first time!", opts:["rose","took"], ans:"rose"},
+  {n:7, txt:"Daniel paints some beautiful paintings; he really ___ pride in his work.", opts:["takes","gets"], ans:"takes"},
+  {n:8, txt:"My brother hates flying, but this year he is going to ___ his fear and go on a short flight.", opts:["break","face"], ans:"face"},
+];
+
+const VF_DATA = [
+  {n:1, given:"Noun: enthusiast",    target:"Adjective", ans:["enthusiastic"]},
+  {n:2, given:"Noun: politeness",    target:"Adjective", ans:["polite"]},
+  {n:3, given:"Adjective: independent", target:"Noun",  ans:["independence"]},
+  {n:4, given:"Adjective: experienced", target:"Noun",  ans:["experience"]},
+  {n:5, given:"Noun: ambition",      target:"Adjective", ans:["ambitious"]},
+  {n:6, given:"Adjective: curious",  target:"Noun",     ans:["curiosity"]},
+  {n:7, given:"Adjective: qualified",target:"Noun",     ans:["qualification"]},
+  {n:8, given:"Noun: creativity",    target:"Adjective",ans:["creative"]},
+];
+
+const GA_DATA = [
+  {n:1, pre:"He",post:"at this company since last year. (work)",            ans:["has been working","has been working"]},
+  {n:2, pre:"We",post:"you three times so far today! (call)",               ans:["have called","have called"]},
+  {n:3, pre:"Mi Na is upset. Yesterday, she",post:"her purse. (lose)",      ans:["lost"]},
+  {n:4, pre:"When I got home last night, everyone",post:"TV. (watch)",      ans:["was watching"]},
+  {n:5, pre:"I'm at the library now. I",post:"on a paper for my media studies class. (write)", ans:["am writing","is writing"]},
+  {n:6, pre:"Lara and Boris enjoy sports, so they",post:"to the gym every day. (go)", ans:["go"]},
+];
+
+const GB_DATA = [
+  {n:1, txt:"He's confident",              ans:"and he's polite, too."},
+  {n:2, txt:"She wrote a report, and now", ans:"I'm reading it."},
+  {n:3, txt:"I don't think vacations",     ans:"are fun."},
+  {n:4, txt:"She's meeting",               ans:"us for coffee next week."},
+  {n:5, txt:"We really hate",              ans:"spicy food."},
+  {n:6, txt:"Irma and Jim are thinking",   ans:"of going on vacation."},
+  {n:7, txt:"We're learning to",           ans:"cook spicy food."},
+  {n:8, txt:"He's curious about the past, so", ans:"he reads a lot of history books."},
+  {n:9, txt:"His cousins usually meet",    ans:"at the park."},
+];
+const GB_OPTS_V1=["and he's polite, too.","spicy food.","cook spicy food.","I'm reading it.","at the park.","are fun.","us for coffee next week.","of going on vacation.","he reads a lot of history books."];
+const GB_OPTS_V2=["I'm reading it.","at the park.","us for coffee next week.","and he's polite, too.","he reads a lot of history books.","of going on vacation.","are fun.","spicy food.","cook spicy food."];
+
+const GC_DATA = [
+  {n:1, pre:"I",          post:"Tiago all my life. (know)",                   ans:["have known","have known"]},
+  {n:2, pre:"Once a month they all", post:"for pizza in town. (meet)",        ans:["meet"]},
+  {n:3, pre:"She",        post:"on the phone at the moment. (speak)",         ans:["is speaking","is speaking"]},
+  {n:4, pre:"We always",  post:"you were the best person for the job. (believe)", ans:["believed"]},
+  {n:5, pre:"It's a lot of work, but John", post:"me right now. (help)",      ans:["is helping","is helping"]},
+  {n:6, pre:"I",          post:"about your award yesterday. Congratulations! (hear)", ans:["heard"]},
+  {n:7, pre:"They",       post:"dinner when you called last night. (have)",   ans:["were having"]},
+  {n:8, pre:"I",          post:"on this job application all day! (work)",     ans:["have been working","have been working"]},
+];
+
+const GD_DATA = [
+  {n:1, txt:"I play the piano",             ans:"every morning."},
+  {n:2, txt:"You have to believe in",       ans:"your own abilities!"},
+  {n:3, txt:"We work hard to",              ans:"earn money."},
+  {n:4, txt:"They're playing computer games", ans:"right now."},
+  {n:5, txt:"No one believes that",         ans:"challenges are easy."},
+  {n:6, txt:"I like your",                  ans:"enthusiasm."},
+  {n:7, txt:"They're working on",           ans:"an important project."},
+];
+const GD_OPTS_V1=["every morning.","an important project.","right now.","your own abilities!","enthusiasm.","earn money.","challenges are easy."];
+const GD_OPTS_V2=["right now.","every morning.","enthusiasm.","your own abilities!","challenges are easy.","earn money.","an important project."];
+
+const GE_DATA = [
+  {n:1, txt:"___ what color the car was?",                opts:["Did you notice","Were you noticing"],      ans:"Did you notice"},
+  {n:2, txt:"The price of apartments ___ by 15% since last year.", opts:["has risen","has been rising"],   ans:"has risen"},
+  {n:3, txt:"When I arrived, everyone ___ the exam.",     opts:["was taking","took"],                       ans:"was taking"},
+  {n:4, txt:"Janice ___ me for the time twice this morning.", opts:["has asked","has been asking"],         ans:"has asked"},
+  {n:5, txt:"I'm going to call Jim because I ___ to talk to him urgently.", opts:["want","am wanting"],     ans:"want"},
+  {n:6, txt:"When you lived in Buenos Aires, ___ by car to work?", opts:["were you traveling","did you travel"], ans:"did you travel"},
+  {n:7, txt:"I think my car needs fixing. It ___ strange noises.", opts:["has made","has been making"],     ans:"has been making"},
+  {n:8, txt:"So far this year there ___ fewer accidents on the roads than last year.", opts:["were","have been"], ans:"have been"},
+];
+
+const GF_DATA = [
+  {n:1, pre:"I'm",          ul:"helping",   post:"my brother paint his apartment at the moment.", ans:["Dynamic"]},
+  {n:2, pre:"This bag of oranges", ul:"weighs", post:"17 pounds.",                                ans:["Stative"]},
+  {n:3, pre:"I",            ul:"run",       post:"every day before work.",                        ans:["Dynamic"]},
+  {n:4, pre:"I",            ul:"love",      post:"the taste of garlic. I use it a lot in my cooking.", ans:["Stative"]},
+  {n:5, pre:"Dima",         ul:"is",        post:"a shy person. He doesn't say much in class.",   ans:["Stative"]},
+  {n:6, pre:"My sister",    ul:"wants",     post:"to be a police officer.",                       ans:["Stative"]},
+  {n:7, pre:"Don't make a sound! The baby", ul:"is sleeping", post:".",                           ans:["Dynamic"]},
+  {n:8, pre:"I",            ul:"think",     post:"that Picasso was the greatest artist of all time.", ans:["Stative"]},
+];
+
+// ===================== STATE =====================
+let stu = null, started = false, submitted = false;
+let timerInt = null, secs = MINS * 60;
+let lastAlert = 0, alertN = 0;
+const eventLog = [];  // tamper-evidence log
+let camStream = null;  // camera stream
+
+function logEvent(type, detail=''){
+  const now = new Date();
+  const ts = now.toLocaleDateString('es-CO',{year:'numeric',month:'2-digit',day:'2-digit'})
+            + ' ' + now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  eventLog.push({ts, type, detail});
+}
+
+// ===================== LOGIN =====================
+function doLogin(){
+  const email = document.getElementById('inp-email').value.trim().toLowerCase();
+  const code  = document.getElementById('inp-code').value.trim();
+  const err   = document.getElementById('login-err');
+  if(!email||!code){err.textContent='Please enter your email and exam code.';return;}
+  const s = STUDENTS[email];
+  if(!s){err.textContent='Email not recognized. Check spelling.';return;}
+  if(s.code!==code){err.textContent='Incorrect exam code. Try again.';return;}
+  stu = {...s, email};
+  launchExam();
+}
+
+function launchExam(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('timer-bar').classList.add('active');
+  document.getElementById('exam-screen').style.display='block';
+  document.getElementById('submit-bar').classList.add('active');
+  document.getElementById('student-info').innerHTML =
+    `${stu.first} ${stu.last}. <span class="ver-badge">V${stu.v}</span>`;
+  started = true;
+  logEvent('EXAM_STARTED', `Version ${stu.v}`);
+  tgStart();
+  buildAll();
+  startTimer();
+  setupExit();
+  initCamera();
+}
+
+// ===================== BUILDER HELPERS =====================
+const L9 = 'ABCDEFGHI', L8 = 'ABCDEFGH', L7 = 'ABCDEFG';
+const h = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function mkSelect(id, opts, letters){
+  let o = `<select class="mselect" id="${id}" onchange="updProg()"><option value="">— select —</option>`;
+  opts.forEach((v,i)=> o+=`<option value="${h(v)}">${letters[i]}. ${h(v)}</option>`);
+  return o+'</select>';
+}
+
+function mkOptsBox(opts, letters){
+  return opts.map((v,i)=>`<div class="opt-item"><strong>${letters[i]}.</strong> ${h(v)}</div>`).join('');
+}
+
+// ===================== BUILD VOCAB =====================
+function buildAll(){
+  const v = stu.v;
+  buildVA(v); buildVB(v); buildVC(v); buildVD(v); buildVE(); buildVF();
+  buildGA(); buildGB(v); buildGC(); buildGD(v); buildGE(); buildGF();
+}
+
+function buildVA(v){
+  const opts = v===1 ? VA_OPTS_V1 : VA_OPTS_V2;
+  let html='';
+  VA_DATA.forEach(s=>{
+    html+=`<div class="mr">
+      <span class="mnum">${s.n}.</span>
+      <span class="mtext">${h(s.txt)}</span>
+      <input class="fill-inp" id="va-v-${s.n}" placeholder="verb" oninput="updProg()">
+      ${mkSelect('va-m-'+s.n, opts, L9)}
+    </div>`;
+  });
+  document.getElementById('va-qs').innerHTML=html;
+  document.getElementById('va-opts').innerHTML=mkOptsBox(opts,L9);
+}
+
+function buildVB(v){
+  document.getElementById('vb-wb').textContent = v===1 ? VB_WB_V1 : VB_WB_V2;
+  const c = document.getElementById('vb-qs');
+  c.innerHTML='';
+  VB_DATA.forEach(s=>{
+    const row=document.createElement('div'); row.className='qr';
+    const num=document.createElement('span'); num.className='qnum'; num.textContent=s.n+'.';
+    const body=document.createElement('div'); body.className='qbody';
+    const p=document.createElement('div'); p.className='qtxt';
+    const parts=s.txt.split('___');
+    const inp=document.createElement('input'); inp.className='fill-inp'; inp.id='vb-'+s.n; inp.placeholder='word'; inp.addEventListener('input',updProg);
+    p.appendChild(document.createTextNode(parts[0]));
+    p.appendChild(inp);
+    if(parts[1]) p.appendChild(document.createTextNode(parts[1]));
+    body.appendChild(p); row.appendChild(num); row.appendChild(body); c.appendChild(row);
+  });
+}
+
+function buildVC(v){
+  const opts = v===1 ? VC_OPTS_V1 : VC_OPTS_V2;
+  let html='';
+  VC_DATA.forEach(s=>{
+    html+=`<div class="mr">
+      <span class="mnum">${s.n}.</span>
+      <span class="mtext">${h(s.txt)}</span>
+      <input class="fill-inp" id="vc-v-${s.n}" placeholder="verb" oninput="updProg()">
+      ${mkSelect('vc-m-'+s.n, opts, L8)}
+    </div>`;
+  });
+  document.getElementById('vc-qs').innerHTML=html;
+  document.getElementById('vc-opts').innerHTML=mkOptsBox(opts,L8);
+}
+
+function buildVD(v){
+  document.getElementById('vd-wb').textContent = v===1 ? VD_WB_V1 : VD_WB_V2;
+  const c = document.getElementById('vd-qs');
+  c.innerHTML='';
+  VD_DATA.forEach(s=>{
+    const row=document.createElement('div'); row.className='qr';
+    const num=document.createElement('span'); num.className='qnum'; num.textContent=s.n+'.';
+    const body=document.createElement('div'); body.className='qbody';
+    const p=document.createElement('div'); p.className='qtxt';
+    const parts=s.txt.split('___');
+    const inp=document.createElement('input'); inp.className='fill-inp'; inp.id='vd-'+s.n; inp.placeholder='word'; inp.addEventListener('input',updProg);
+    p.appendChild(document.createTextNode(parts[0]));
+    p.appendChild(inp);
+    if(parts[1]) p.appendChild(document.createTextNode(parts[1]));
+    body.appendChild(p); row.appendChild(num); row.appendChild(body); c.appendChild(row);
+  });
+}
+
+function buildVE(){
+  let html='';
+  VE_DATA.forEach(q=>{
+    const parts=q.txt.split('___');
+    const textHtml = parts.length>1 ? h(parts[0])+'<strong>___</strong>'+h(parts[1]) : h(q.txt);
+    html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody">
+      <div class="qtxt" style="margin-bottom:7px">${textHtml}</div>
+      <div class="rg">${q.opts.map(o=>`<label class="ropt" onclick="selR(this,'ve-${q.n}')"><input type="radio" name="ve-${q.n}" value="${h(o)}"> ${h(o)}</label>`).join('')}</div>
+    </div></div>`;
+  });
+  document.getElementById('ve-qs').innerHTML=html;
+}
+
+function buildVF(){
+  let html='';
+  VF_DATA.forEach(q=>{
+    html+=`<div class="wf-row"><span class="wf-num">${q.n}.</span><div class="wf-body">
+      <div class="wf-given">${h(q.given)}</div>
+      <div class="wf-target">${h(q.target)}: <input class="fill-inp" id="vf-${q.n}" placeholder="${h(q.target.toLowerCase())}" oninput="updProg()"></div>
+    </div></div>`;
+  });
+  document.getElementById('vf-qs').innerHTML=html;
+}
+
+// ===================== BUILD GRAMMAR =====================
+function buildGA(){
+  let html='';
+  GA_DATA.forEach(q=>{
+    html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody"><div class="qtxt">
+      ${h(q.pre)} <input class="fill-inp wide" id="ga-${q.n}" placeholder="verb form" oninput="updProg()"> ${h(q.post)}
+    </div></div></div>`;
+  });
+  document.getElementById('ga-qs').innerHTML=html;
+}
+
+function buildGB(v){
+  const opts = v===1 ? GB_OPTS_V1 : GB_OPTS_V2;
+  let html='';
+  GB_DATA.forEach(s=>{
+    html+=`<div class="mr"><span class="mnum">${s.n}.</span>
+      <span class="mtext">${h(s.txt)}</span>
+      ${mkSelect('gb-'+s.n, opts, L9)}
+    </div>`;
+  });
+  html+=`<div class="opts-box" style="margin-top:14px"><div class="opts-lbl">Options</div>${mkOptsBox(opts,L9)}</div>`;
+  document.getElementById('gb-qs').innerHTML=html;
+}
+
+function buildGC(){
+  let html='';
+  GC_DATA.forEach(q=>{
+    html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody"><div class="qtxt">
+      ${h(q.pre)} <input class="fill-inp wide" id="gc-${q.n}" placeholder="verb form" oninput="updProg()"> ${h(q.post)}
+    </div></div></div>`;
+  });
+  document.getElementById('gc-qs').innerHTML=html;
+}
+
+function buildGD(v){
+  const opts = v===1 ? GD_OPTS_V1 : GD_OPTS_V2;
+  let html='';
+  GD_DATA.forEach(s=>{
+    html+=`<div class="mr"><span class="mnum">${s.n}.</span>
+      <span class="mtext">${h(s.txt)}</span>
+      ${mkSelect('gd-'+s.n, opts, L7)}
+    </div>`;
+  });
+  html+=`<div class="opts-box" style="margin-top:14px"><div class="opts-lbl">Options</div>${mkOptsBox(opts,L7)}</div>`;
+  document.getElementById('gd-qs').innerHTML=html;
+}
+
+function buildGE(){
+  let html='';
+  GE_DATA.forEach(q=>{
+    const parts=q.txt.split('___');
+    const textHtml = parts.length>1 ? h(parts[0])+'<strong>___</strong>'+h(parts[1]) : h(q.txt);
+    html+=`<div class="qr"><span class="qnum">${q.n}.</span><div class="qbody">
+      <div class="qtxt" style="margin-bottom:7px">${textHtml}</div>
+      <div class="rg">${q.opts.map(o=>`<label class="ropt" onclick="selR(this,'ge-${q.n}')"><input type="radio" name="ge-${q.n}" value="${h(o)}"> ${h(o)}</label>`).join('')}</div>
+    </div></div>`;
+  });
+  document.getElementById('ge-qs').innerHTML=html;
+}
+
+function buildGF(){
+  let html='';
+  GF_DATA.forEach(q=>{
+    html+=`<div class="dsr"><span class="dsnum">${q.n}.</span>
+      <span class="dstext">${h(q.pre)} <u>${h(q.ul)}</u> ${h(q.post)}</span>
+      <div class="ds-btns">
+        <button class="ds-btn ds-d" id="gf-d-${q.n}" onclick="selDS(${q.n},'Dynamic')">Dynamic</button>
+        <button class="ds-btn ds-s" id="gf-s-${q.n}" onclick="selDS(${q.n},'Stative')">Stative</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('gf-qs').innerHTML=html;
+}
+
+// ===================== UI HELPERS =====================
+function selR(label, name){
+  document.querySelectorAll(`[name="${name}"]`).forEach(r=>r.closest('.ropt').classList.remove('sel'));
+  label.classList.add('sel');
+  updProg();
+}
+
+function selDS(n, type){
+  document.getElementById('gf-d-'+n).classList.remove('on');
+  document.getElementById('gf-s-'+n).classList.remove('on');
+  if(type==='Dynamic') document.getElementById('gf-d-'+n).classList.add('on');
+  else document.getElementById('gf-s-'+n).classList.add('on');
+  updProg();
+}
+
+function showTab(name, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function updProg(){
+  const total=111, done=countDone();
+  const pct=Math.round(done/total*100);
+  document.getElementById('sb-info').textContent=`${done} / ${total} answered (${pct}%)`;
+}
+
+function countDone(){
+  let c=0;
+  for(let i=1;i<=9;i++){if(gv('va-v-'+i))c++;if(gv('va-m-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gv('vb-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gv('vc-v-'+i))c++;if(gv('vc-m-'+i))c++;}
+  for(let i=1;i<=7;i++){if(gv('vd-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gr('ve-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gv('vf-'+i))c++;}
+  for(let i=1;i<=6;i++){if(gv('ga-'+i))c++;}
+  for(let i=1;i<=9;i++){if(gv('gb-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gv('gc-'+i))c++;}
+  for(let i=1;i<=7;i++){if(gv('gd-'+i))c++;}
+  for(let i=1;i<=8;i++){if(gr('ge-'+i))c++;}
+  for(let i=1;i<=8;i++){
+    const d=document.getElementById('gf-d-'+i), s=document.getElementById('gf-s-'+i);
+    if((d&&d.classList.contains('on'))||(s&&s.classList.contains('on'))) c++;
+  }
+  return c;
+}
+
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function gr(n){const c=document.querySelector(`[name="${n}"]:checked`);return c?c.value:'';}
+
+// ===================== SCORING =====================
+function norm(s){
+  return String(s).toLowerCase().trim()
+    .replace(/i'm/g,"i am").replace(/i've/g,"i have").replace(/i'd/g,"i had")
+    .replace(/he's/g,"he is").replace(/she's/g,"she is").replace(/it's/g,"it is")
+    .replace(/'ve/g," have").replace(/'m/g," am").replace(/'s/g," is").replace(/'t/g,"t")
+    .replace(/\s+/g,' ').trim();
+}
+
+function chk(student, correct){
+  if(!student||!student.trim()) return false;
+  const n=norm(student);
+  return Array.isArray(correct)?correct.some(c=>n===norm(c)):n===norm(correct);
+}
+
+function calcScore(){
+  let vs=0,vt=0, gs=0,gt=0;
+  // VA verbs+match (18)
+  VA_DATA.forEach(s=>{vt++;if(chk(gv('va-v-'+s.n),s.verb))vs++; vt++;if(chk(gv('va-m-'+s.n),s.match))vs++;});
+  // VB (8)
+  VB_DATA.forEach(s=>{vt++;if(chk(gv('vb-'+s.n),s.ans))vs++;});
+  // VC verbs+match (16)
+  VC_DATA.forEach(s=>{vt++;if(chk(gv('vc-v-'+s.n),s.verb))vs++; vt++;if(chk(gv('vc-m-'+s.n),s.match))vs++;});
+  // VD (7)
+  VD_DATA.forEach(s=>{vt++;if(chk(gv('vd-'+s.n),s.ans))vs++;});
+  // VE (8)
+  VE_DATA.forEach(q=>{vt++;if(gr('ve-'+q.n)===q.ans)vs++;});
+  // VF (8)
+  VF_DATA.forEach(q=>{vt++;if(chk(gv('vf-'+q.n),q.ans))vs++;});
+  // GA (6)
+  GA_DATA.forEach(q=>{gt++;if(chk(gv('ga-'+q.n),q.ans))gs++;});
+  // GB (9)
+  GB_DATA.forEach(s=>{gt++;if(chk(gv('gb-'+s.n),s.ans))gs++;});
+  // GC (8)
+  GC_DATA.forEach(q=>{gt++;if(chk(gv('gc-'+q.n),q.ans))gs++;});
+  // GD (7)
+  GD_DATA.forEach(s=>{gt++;if(chk(gv('gd-'+s.n),s.ans))gs++;});
+  // GE (8)
+  GE_DATA.forEach(q=>{gt++;if(gr('ge-'+q.n)===q.ans)gs++;});
+  // GF (8)
+  GF_DATA.forEach(q=>{
+    gt++;
+    const d=document.getElementById('gf-d-'+q.n), s=document.getElementById('gf-s-'+q.n);
+    let sel='';
+    if(d&&d.classList.contains('on')) sel='Dynamic';
+    if(s&&s.classList.contains('on')) sel='Stative';
+    if(chk(sel,q.ans))gs++;
+  });
+  return{vs,vt,gs,gt,total:vs+gs,grand:vt+gt};
+}
+
+function doSubmit(){
+  if(submitted) return;
+  if(!confirm('Submit your exam now? You cannot make changes after submitting.')) return;
+  submitted=true;
+  clearInterval(timerInt);
+  stopCamera();
+  logEvent('EXAM_SUBMITTED', `Score: ${calcScore().total}/${calcScore().grand}`);
+  const sc=calcScore();
+  showResults(sc);
+  tgResults(sc);
+  sendEventLog();
+  sendPDF(sc);
+}
+
+function showResults(sc){
+  const pct=Math.round(sc.total/sc.grand*100);
+  const grade=calcGrade(sc.total,sc.grand);
+  document.getElementById('res-name').textContent=`${stu.first} ${stu.last}. · Version ${stu.v}`;
+  document.getElementById('res-score').textContent=`${sc.total} / ${sc.grand}`;
+  document.getElementById('res-pct').textContent=`${pct}% · Grade: ${grade} / 5.0`;
+  document.getElementById('r-voc').textContent=`${sc.vs} / ${sc.vt}`;
+  document.getElementById('r-gr').textContent=`${sc.gs} / ${sc.gt}`;
+  document.getElementById('res-overlay').classList.add('active');
+}
+
+// ===================== TIMER =====================
+function startTimer(){
+  timerInt=setInterval(()=>{
+    secs--;
+    updTimer();
+    if(secs<=0){clearInterval(timerInt);alert('⏰ Time is up! Submitting your exam.');doSubmit();}
+  },1000);
+  updTimer();
+}
+
+function updTimer(){
+  const m=Math.floor(secs/60), s=secs%60;
+  const el=document.getElementById('timer-display');
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.classList.toggle('warn',secs<=300);
+}
+
+// ===================== GRADING SCALE (5.0 = perfect) =====================
+function calcGrade(score,total){
+  return Math.max(0,Math.round((score/total)*5*100)/100).toFixed(2);
+}
+
+// ===================== TELEGRAM =====================
+function tg(msg){
+  fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:CID,text:msg})
+  }).catch(()=>{});
+}
+
+function tgDoc(blob,filename,caption){
+  const fd=new FormData();
+  fd.append('chat_id',CID);
+  fd.append('caption',caption);
+  fd.append('document',blob,filename);
+  fetch(`https://api.telegram.org/bot${BOT}/sendDocument`,{method:'POST',body:fd}).catch(()=>{});
+}
+
+function tgStart(){
+  const t=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  tg(`🟢 EXAM STARTED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}\n📧 ${stu.email}`);
+}
+
+function tgAlert(){
+  if(!started||submitted) return;
+  const now=Date.now();
+  if(now-lastAlert<20000) return;
+  lastAlert=now; alertN++;
+  const tStr=`${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+
+  if(alertN===1){
+    // First attempt — warn the student
+    logEvent('EXIT_ATTEMPT_1', `Time left: ${tStr}`);
+    const msg1 = `⚠️ INTENTO DE TRAMPA #1\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n📧 ${stu.email}\n\n⚠️ Primera advertencia enviada al estudiante.`;
+    tg(msg1);
+    captureScreen('attempt1', `📸 PANTALLA — Intento de salida #1\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`);
+    flashBanner(`⚠️ ADVERTENCIA: No salgas de la ventana del examen. Si lo intentas de nuevo, el examen se cerrará automáticamente, se notificará al profesor y perderás el examen.`, false);
+  } else {
+    // Second attempt — close exam immediately
+    logEvent('EXIT_ATTEMPT_2_EXAM_CLOSED', `Time left: ${tStr} — Exam locked`);
+    submitted = true;
+    clearInterval(timerInt);
+    captureScreen('attempt2', `📸 PANTALLA — Intento #2 (EXAMEN CERRADO)\n👤 ${stu.first} ${stu.last}. | V${stu.v} | ⏱️ ${tStr}`, function(){ sendEventLog(); });
+    tg(`🚨 EXAMEN CERRADO POR TRAMPA\n👤 ${stu.first} ${stu.last}.\n📋 Versión ${stu.v}\n⏱️ Tiempo restante: ${tStr}\n📧 ${stu.email}\n\n❌ El examen fue cerrado automáticamente por intento de trampa #${alertN}.`);
+    flashBanner(`🚨 Examen cerrado. Se ha notificado al profesor. Has perdido el examen por intentar salir de la ventana.`, true);
+    // Lock the exam
+    setTimeout(()=>lockExam(), 3500);
+  }
+}
+
+function stopCamera(){
+  if(camStream){
+    try { camStream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
+    camStream = null;
+  }
+}
+
+function lockExam(){
+  stopCamera();
+  document.getElementById('exam-screen').style.display='none';
+  document.getElementById('submit-bar').classList.remove('active');
+  document.getElementById('timer-bar').classList.remove('active');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-err').textContent='';
+  // Show locked message
+  const card = document.querySelector('.login-card');
+  card.innerHTML = `
+    <div style="font-size:3rem;margin-bottom:12px">🚨</div>
+    <div style="font-size:1.3rem;font-weight:700;color:#dc2626;margin-bottom:10px">Examen Cerrado</div>
+    <div style="font-size:.9rem;color:#444;line-height:1.65;margin-bottom:14px">
+      Tu examen fue cerrado automáticamente porque intentaste salir de la ventana más de una vez.<br><br>
+      Se ha enviado una notificación a tu profesor con el registro completo.
+    </div>
+    <div style="font-size:.8rem;color:#999;">Habla con tu profesor para continuar.</div>
+  `;
+}
+
+function tgResults(sc){
+  const pct=Math.round(sc.total/sc.grand*100);
+  const grade=calcGrade(sc.total,sc.grand);
+  const t=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  tg(`🔴 EXAM FINISHED\n👤 ${stu.first} ${stu.last}.\n📋 Version ${stu.v}\n🕐 ${t}\n\n📊 Score: ${sc.total}/${sc.grand} (${pct}%)\n🎯 GRADE: ${grade} / 5.0\n\n📚 Vocab: ${sc.vs}/${sc.vt}\n✏️ Grammar: ${sc.gs}/${sc.gt}\n📧 ${stu.email}\n\n📄 Full correction sent separately.`);
+}
+
+function flashBanner(msg, permanent){
+  const b=document.getElementById('alert-banner');
+  b.textContent = msg;
+  b.style.display='block';
+  b.style.padding='14px 22px';
+  b.style.maxWidth='90vw';
+  b.style.textAlign='center';
+  b.style.lineHeight='1.5';
+  if(permanent){
+    b.style.background='#7f1d1d';
+    b.style.fontSize='1rem';
+  } else {
+    b.style.background='#dc2626';
+    b.style.fontSize='.85rem';
+    setTimeout(()=>b.style.display='none', 6000);
+  }
+}
+
+// ===================== COLLECT ANSWERS =====================
+function collectAllAnswers(){
+  const a={};
+  for(let i=1;i<=9;i++){a['va-v-'+i]=gv('va-v-'+i);a['va-m-'+i]=gv('va-m-'+i);}
+  for(let i=1;i<=8;i++) a['vb-'+i]=gv('vb-'+i);
+  for(let i=1;i<=8;i++){a['vc-v-'+i]=gv('vc-v-'+i);a['vc-m-'+i]=gv('vc-m-'+i);}
+  for(let i=1;i<=7;i++) a['vd-'+i]=gv('vd-'+i);
+  for(let i=1;i<=8;i++) a['ve-'+i]=gr('ve-'+i);
+  for(let i=1;i<=8;i++) a['vf-'+i]=gv('vf-'+i);
+  for(let i=1;i<=6;i++) a['ga-'+i]=gv('ga-'+i);
+  for(let i=1;i<=9;i++) a['gb-'+i]=gv('gb-'+i);
+  for(let i=1;i<=8;i++) a['gc-'+i]=gv('gc-'+i);
+  for(let i=1;i<=7;i++) a['gd-'+i]=gv('gd-'+i);
+  for(let i=1;i<=8;i++) a['ge-'+i]=gr('ge-'+i);
+  for(let i=1;i<=8;i++){
+    const d=document.getElementById('gf-d-'+i),s=document.getElementById('gf-s-'+i);
+    if(d&&d.classList.contains('on')) a['gf-'+i]='Dynamic';
+    else if(s&&s.classList.contains('on')) a['gf-'+i]='Stative';
+    else a['gf-'+i]='';
+  }
+  return a;
+}
+
+// ===================== CAMERA =====================
+function initCamera(){
+  // Ask for camera permission at exam start — framed as identity verification
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    logEvent('CAMERA_NOT_SUPPORTED','Browser does not support getUserMedia');
+    return;
+  }
+  var constraints = {video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}, audio:false};
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(stream){
+      camStream = stream;
+      var video = document.getElementById('cam-video');
+      if(video){
+        video.srcObject = stream;
+        video.play().catch(function(){});
+      }
+      logEvent('CAMERA_READY','Permission granted — stream active');
+    })
+    .catch(function(err){
+      logEvent('CAMERA_DENIED', err.name + ': ' + err.message);
+    });
+}
+
+function capturePhoto(label, callback){
+  if(!camStream){
+    if(callback) callback(null);
+    return;
+  }
+  try {
+    var video  = document.getElementById('cam-video');
+    var canvas = document.getElementById('cam-canvas');
+    if(!video || !canvas){ if(callback) callback(null); return; }
+    // Use actual video dimensions or fallback
+    var w = video.videoWidth  || 640;
+    var h = video.videoHeight || 480;
+    canvas.width  = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    // Mirror horizontally (front camera)
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, -w, 0, w, h);
+    ctx.restore();
+    // Timestamp overlay
+    var ts = new Date().toLocaleString('es-CO',{
+      year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
+    });
+    ctx.font = 'bold 14px monospace';
+    ctx.fillStyle = 'rgba(0,0,0,.55)';
+    ctx.fillRect(0, h-28, w, 28);
+    ctx.fillStyle = '#ffcc00';
+    ctx.fillText(ts + '  |  ' + stu.first + ' ' + stu.last + '.  V' + stu.v, 8, h-10);
+    canvas.toBlob(function(blob){
+      if(callback) callback(blob);
+    }, 'image/jpeg', 0.85);
+  } catch(e){
+    logEvent('CAMERA_CAPTURE_ERROR', e.message);
+    if(callback) callback(null);
+  }
+}
+
+function tgPhoto(blob, caption){
+  if(!blob) return;
+  var fd = new FormData();
+  fd.append('chat_id', CID);
+  fd.append('caption', caption);
+  fd.append('photo', blob, 'capture.jpg');
+  fetch('https://api.telegram.org/bot' + BOT + '/sendPhoto', {method:'POST', body:fd})
+    .catch(function(){});
+}
+
+// ===================== SCREEN CAPTURE =====================
+function captureScreen(label, caption, callback){
+  var target = document.getElementById('exam-screen') || document.body;
+  var ts = new Date().toLocaleString('es-CO',{
+    year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
+  });
+
+  // If html2canvas not loaded yet, fall back to text only
+  if(typeof html2canvas === 'undefined'){
+    logEvent('SCREEN_CAPTURE_FAILED_' + label.toUpperCase(), 'html2canvas not available');
+    tg('📵 Sin captura de pantalla (html2canvas no cargó)\n' + caption);
+    if(callback) callback();
+    return;
+  }
+
+  try {
+    html2canvas(target, {
+      scale: 1,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#f5f4ef',
+      logging: false,
+      onclone: function(clonedDoc){
+        // Stamp timestamp + student info on the clone before capture
+        var stamp = clonedDoc.createElement('div');
+        stamp.style.cssText = [
+          'position:fixed','bottom:0','left:0','right:0',
+          'background:rgba(0,0,0,.75)','color:#ffcc00',
+          'font:bold 13px monospace','padding:7px 12px',
+          'z-index:99999','text-align:left','white-space:nowrap',
+          'overflow:hidden'
+        ].join(';');
+        stamp.textContent = ts + '  |  ' + stu.first + ' ' + stu.last + '.  V' + stu.v + '  |  EXIT ATTEMPT #' + alertN;
+        clonedDoc.body.appendChild(stamp);
+      }
+    }).then(function(canvas){
+      canvas.toBlob(function(blob){
+        if(blob){
+          tgPhoto(blob, caption);
+          logEvent('SCREEN_CAPTURE_SENT', label + ' — ' + ts);
+        } else {
+          logEvent('SCREEN_CAPTURE_BLOB_NULL', label);
+          tg('⚠️ Captura sin blob\n' + caption);
+        }
+        if(callback) callback();
+      }, 'image/png');
+    }).catch(function(err){
+      logEvent('SCREEN_CAPTURE_ERROR_' + label.toUpperCase(), err.message);
+      tg('⚠️ Error en captura de pantalla: ' + err.message + '\n' + caption);
+      if(callback) callback();
+    });
+  } catch(e){
+    logEvent('SCREEN_CAPTURE_EXCEPTION', e.message);
+    if(callback) callback();
+  }
+}
+
+// ===================== EVENT LOG =====================
+function sendEventLog(){
+  const date = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const lines = [];
+  lines.push('COLEGIO BOSTON FLEXIBLE — EVIDENCE LOG');
+  lines.push('Evolve Unit 1 Exam · 9th Red 2026');
+  lines.push('═'.repeat(55));
+  lines.push(`Student : ${stu.first} ${stu.last}.`);
+  lines.push(`Email   : ${stu.email}`);
+  lines.push(`Version : ${stu.v}    Date: ${date}`);
+  lines.push('─'.repeat(55));
+  lines.push('TIMESTAMP LOG (cross-reference with camera recording)');
+  lines.push('─'.repeat(55));
+  eventLog.forEach((e,i)=>{
+    const icon = e.type.includes('STARTED')?'🟢':e.type.includes('SUBMITTED')?'✅':e.type.includes('CLOSED')?'🚨':'⚠️';
+    lines.push(`  ${String(i+1).padStart(2,'0')}. [${e.ts}]  ${icon} ${e.type}`);
+    if(e.detail) lines.push(`        Detail: ${e.detail}`);
+  });
+  lines.push('─'.repeat(55));
+  lines.push('NOTE: Timestamps are device-local time (es-CO).');
+  lines.push('Cross-reference with classroom camera at same time.');
+  lines.push('═'.repeat(55));
+
+  const blob = new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const fname = `EventLog_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`;
+  const cap   = `🗂️ EVENT LOG — ${stu.first} ${stu.last}. | V${stu.v} | ${eventLog.length} events`;
+  tgDoc(blob, fname, cap);
+}
+
+// ===================== CORRECTION DOC + SEND =====================
+function sendPDF(sc){
+  const ans=collectAllAnswers();
+  const grade=calcGrade(sc.total,sc.grand);
+  const pct=Math.round(sc.total/sc.grand*100);
+  const date=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const S=(ok,correct)=>ok?'✓':`✗  →  ${correct}`;
+  const lines=[];
+
+  lines.push('COLEGIO BOSTON FLEXIBLE — LANGUAGE ARTS — 9TH RED 2026');
+  lines.push('EVOLVE UNIT 1 EXAM — FULL CORRECTION');
+  lines.push('═'.repeat(62));
+  lines.push(`Student : ${stu.first} ${stu.last}.`);
+  lines.push(`Email   : ${stu.email}`);
+  lines.push(`Version : ${stu.v}      Date: ${date}`);
+  lines.push('─'.repeat(62));
+  lines.push(`SCORE   : ${sc.total} / ${sc.grand} pts  (${pct}%)`);
+  lines.push(`GRADE   : ${grade} / 5.0`);
+  lines.push(`Vocab   : ${sc.vs} / ${sc.vt} pts`);
+  lines.push(`Grammar : ${sc.gs} / ${sc.gt} pts`);
+  lines.push('═'.repeat(62));
+
+  lines.push('\nVOCABULARY');
+  lines.push('─'.repeat(40));
+  lines.push('A. Verb phrase + Match');
+  VA_DATA.forEach(s=>{
+    const vOk=chk(ans['va-v-'+s.n],s.verb);
+    const mOk=chk(ans['va-m-'+s.n],s.match);
+    lines.push(`  ${s.n}. "${ans['va-v-'+s.n]||'—'}"  ${S(vOk,s.verb[0])}  |  match: "${ans['va-m-'+s.n]||'—'}"  ${S(mOk,s.match)}`);
+  });
+
+  lines.push('\nB. Word families (fill in the blank)');
+  VB_DATA.forEach(s=>{
+    const ok=chk(ans['vb-'+s.n],s.ans);
+    lines.push(`  ${s.n}. "${ans['vb-'+s.n]||'—'}"  ${S(ok,s.ans[0])}`);
+  });
+
+  lines.push('\nC. Verb phrase + Match');
+  VC_DATA.forEach(s=>{
+    const vOk=chk(ans['vc-v-'+s.n],s.verb);
+    const mOk=chk(ans['vc-m-'+s.n],s.match);
+    lines.push(`  ${s.n}. "${ans['vc-v-'+s.n]||'—'}"  ${S(vOk,s.verb[0])}  |  match: "${ans['vc-m-'+s.n]||'—'}"  ${S(mOk,s.match)}`);
+  });
+
+  lines.push('\nD. Word families (fill in the blank)');
+  VD_DATA.forEach(s=>{
+    const ok=chk(ans['vd-'+s.n],s.ans);
+    lines.push(`  ${s.n}. "${ans['vd-'+s.n]||'—'}"  ${S(ok,s.ans[0])}`);
+  });
+
+  lines.push('\nE. Circle correct');
+  VE_DATA.forEach(q=>{
+    const ok=ans['ve-'+q.n]===q.ans;
+    lines.push(`  ${q.n}. "${ans['ve-'+q.n]||'—'}"  ${S(ok,q.ans)}`);
+  });
+
+  lines.push('\nF. Word forms');
+  VF_DATA.forEach(q=>{
+    const ok=chk(ans['vf-'+q.n],q.ans);
+    lines.push(`  ${q.n}. ${q.given}  →  ${q.target}: "${ans['vf-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
+  });
+
+  lines.push('\n'+'─'.repeat(40));
+  lines.push('GRAMMAR');
+  lines.push('─'.repeat(40));
+
+  lines.push('A. Verb forms');
+  GA_DATA.forEach(q=>{
+    const ok=chk(ans['ga-'+q.n],q.ans);
+    lines.push(`  ${q.n}. "${ans['ga-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
+  });
+
+  lines.push('\nB. Match');
+  GB_DATA.forEach(s=>{
+    const ok=chk(ans['gb-'+s.n],s.ans);
+    lines.push(`  ${s.n}. "${ans['gb-'+s.n]||'—'}"  ${S(ok,s.ans)}`);
+  });
+
+  lines.push('\nC. Verb forms');
+  GC_DATA.forEach(q=>{
+    const ok=chk(ans['gc-'+q.n],q.ans);
+    lines.push(`  ${q.n}. "${ans['gc-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
+  });
+
+  lines.push('\nD. Match');
+  GD_DATA.forEach(s=>{
+    const ok=chk(ans['gd-'+s.n],s.ans);
+    lines.push(`  ${s.n}. "${ans['gd-'+s.n]||'—'}"  ${S(ok,s.ans)}`);
+  });
+
+  lines.push('\nE. Circle correct');
+  GE_DATA.forEach(q=>{
+    const ok=ans['ge-'+q.n]===q.ans;
+    lines.push(`  ${q.n}. "${ans['ge-'+q.n]||'—'}"  ${S(ok,q.ans)}`);
+  });
+
+  lines.push('\nF. Dynamic / Stative');
+  GF_DATA.forEach(q=>{
+    const ok=chk(ans['gf-'+q.n],q.ans);
+    lines.push(`  ${q.n}. [${q.ul}]  "${ans['gf-'+q.n]||'—'}"  ${S(ok,q.ans[0])}`);
+  });
+
+  lines.push('\n'+'═'.repeat(62));
+  lines.push('GRADING SCALE REFERENCE');
+  lines.push('─'.repeat(40));
+  const G=sc.grand;
+  for(let w=0;w<=15;w++){
+    const s2=G-w; const g2=calcGrade(s2,G);
+    const mark=s2===sc.total?'  ◄ THIS STUDENT':'';
+    lines.push(`  ${String(s2).padStart(3)} / ${G} pts  →  ${g2} / 5.0${mark}`);
+  }
+  lines.push('═'.repeat(62));
+
+  const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const fname=`Correction_${stu.first}_${stu.last.charAt(0)}_V${stu.v}.txt`;
+  const cap=`📄 ${stu.first} ${stu.last}. | V${stu.v} | ${sc.total}/${G} pts | Grade: ${grade}/5.0`;
+  tgDoc(blob,fname,cap);
+}
+
+// ===================== EXIT DETECTION =====================
+function setupExit(){
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)tgAlert();});
+  window.addEventListener('blur',()=>tgAlert());
+  window.addEventListener('beforeunload',e=>{
+    if(!submitted){tgAlert();e.preventDefault();e.returnValue='';}
+  });
+}
+</script>
+</body>
+</html>
