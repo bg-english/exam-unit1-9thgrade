@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="en">
+<meta name="translation-tool" content="no">
+<meta name="yandex" content="noindex, notranslate">
+<meta http-equiv="cache-control" content="no-transform">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="format-detection" content="telephone=no">
@@ -22,6 +27,23 @@
   --blue:   #1e40af;
   --purple: #6d28d9;
 }
+
+/* ===== ANTI-TRANSLATION ===== */
+/* Blocks browser translation overlays and tooltip layers */
+[translate="no"], .notranslate {
+  -webkit-user-select: text;
+}
+font[face], /* Google Translate injects <font> tags */
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip-content,
+.goog-text-highlight {
+  display: none !important;
+  visibility: hidden !important;
+}
+body { top: 0 !important; } /* Prevent GT from pushing body down */
 
 /* ===== RESET & BASE ===== */
 html { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -510,7 +532,7 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="notranslate">
 
 <!-- ======= LOGIN ======= -->
 <div id="login-screen">
@@ -542,8 +564,6 @@ body {
 <div id="alert-banner" id="alert-banner"></div>
 
 <!-- ======= CAMERA (hidden) ======= -->
-<video id="cam-video" style="display:none;position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;" playsinline autoplay muted></video>
-<canvas id="cam-canvas" style="display:none;position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;"></canvas>
 
 <!-- ======= EXAM SCREEN ======= -->
 <div id="exam-screen">
@@ -702,6 +722,141 @@ body {
 </div>
 
 <script>
+// ===================== ANTI-TRANSLATION =====================
+(function(){
+  // Block Google Translate
+  document.documentElement.setAttribute('translate','no');
+  document.documentElement.classList.add('notranslate');
+
+  // Remove GT meta injections and script tags dynamically
+  var obs = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      m.addedNodes.forEach(function(n){
+        if(n.nodeType===1){
+          // Remove Google Translate script/iframe injections
+          if((n.tagName==='SCRIPT'&&n.src&&n.src.indexOf('translate.google')>-1)||
+             (n.tagName==='IFRAME'&&n.id&&n.id.indexOf('google_translate')>-1)||
+             (n.tagName==='FONT'&&n.hasAttribute('face'))){ // GT replaces text nodes with <font>
+            n.parentNode && n.parentNode.removeChild(n);
+          }
+        }
+      });
+    });
+  });
+  obs.observe(document.documentElement,{childList:true,subtree:true});
+
+  // Block Edge/Safari/Firefox translation bar prompts
+  window.addEventListener('languagechange', function(e){ e.preventDefault && e.preventDefault(); });
+
+  // Brave Translate + Chromium built-in translate bar
+  // Override the translate API that Chromium/Brave expose
+  try {
+    Object.defineProperty(document.documentElement, 'lang', {
+      get: function(){ return 'en'; },
+      set: function(){ },  // silently ignore attempts to change lang
+      configurable: false
+    });
+  } catch(e){}
+
+  // Block Chromium/Brave translate trigger events
+  ['beforetranslate','translate','translatefailed'].forEach(function(evt){
+    window.addEventListener(evt, function(e){ e.stopImmediatePropagation(); e.preventDefault(); }, true);
+    document.addEventListener(evt, function(e){ e.stopImmediatePropagation(); e.preventDefault(); }, true);
+  });
+
+  // Brave-specific: if navigator.brave exists, log it (no extra action needed,
+  // translate="no" on <html> is respected by Brave's Chromium core)
+  // Extra safety: watch for any attribute changes on <html> that translators inject
+  var attrObs = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.type==='attributes' && m.attributeName==='class'){
+        var el = m.target;
+        // Google Translate adds 'translated-ltr' or 'translated-rtl' to <html>
+        if(el.classList.contains('translated-ltr') || el.classList.contains('translated-rtl')){
+          el.classList.remove('translated-ltr','translated-rtl');
+          // Force page reload to undo translation if it somehow got through
+          location.reload();
+        }
+      }
+    });
+  });
+  attrObs.observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+
+  // ── Samsung Internet ─────────────────────────────────────
+  // Uses Chromium core — translate="no" covers it.
+  // Extra: block samsung-specific translation attribute
+  var samsungObs = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.attributeName === 'data-samsung-translate'){
+        m.target.removeAttribute('data-samsung-translate');
+      }
+    });
+  });
+  samsungObs.observe(document.documentElement, {attributes:true});
+
+  // ── Yandex Browser ───────────────────────────────────────
+  // Yandex Translate injects window.Ya or window.yandex objects
+  try {
+    Object.defineProperty(window, 'Ya',     { get:function(){return undefined;}, set:function(){}, configurable:false });
+    Object.defineProperty(window, 'yandex', { get:function(){return undefined;}, set:function(){}, configurable:false });
+  } catch(e){}
+
+  // ── UC Browser / Opera Mini / Puffin ─────────────────────
+  // These are proxy browsers — they send content to a server for compression/translation.
+  // cache-control: no-transform meta (added above) is the main defense.
+  // JS fallback: detect and warn
+  var ua = navigator.userAgent || '';
+  if(/UCBrowser|UCWeb|UCWEB|OPR|OPT|Opera Mini|Puffin/i.test(ua)){
+    document.addEventListener('DOMContentLoaded', function(){
+      if(started) return; // don't interfere after login
+      var warn = document.createElement('div');
+      warn.style.cssText = 'position:fixed;inset:0;background:#0f2044;color:#c8992a;display:flex;align-items:center;justify-content:center;z-index:9999;font-family:Arial;font-size:1.1rem;text-align:center;padding:24px;';
+      warn.innerHTML = '<div><strong>⚠️ Browser not supported</strong><br><br>Please open this exam in Chrome, Firefox, Edge or Safari.</div>';
+      document.body.appendChild(warn);
+    });
+  }
+
+  // ── DuckDuckGo Browser ───────────────────────────────────
+  // DDG browser uses Apple's built-in translation on iOS/macOS.
+  // translate="no" on <html> is respected — already covered.
+
+  // ── Arc Browser ──────────────────────────────────────────
+  // Chromium-based — translate="no" covers it fully.
+
+  // ── Tor Browser ──────────────────────────────────────────
+  // Firefox-based — translate="no" covers it. Also: JS is often disabled in Tor,
+  // so we ensure the HTML translate="no" attribute is the primary defense.
+
+  // ── Naver Whale (Korean) ─────────────────────────────────
+  // Chromium-based — translate="no" covers it.
+
+  // ── Kiwi Browser (Android) ───────────────────────────────
+  // Chromium-based — covered.
+
+  // ── Vivaldi / Opera / Opera GX ───────────────────────────
+  // All Chromium-based — covered.
+
+  // ── Microsoft Translator extension ───────────────────────
+  try {
+    Object.defineProperty(window, 'MicrosoftTranslator', { get:function(){return undefined;}, set:function(){}, configurable:false });
+  } catch(e){}
+
+  // ── DeepL extension ──────────────────────────────────────
+  // DeepL injects a shadow DOM element. MutationObserver already covers this.
+  // Extra: block common DeepL class injections
+  var deepLObs = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      m.addedNodes.forEach(function(n){
+        if(n.nodeType===1 && n.id && /deepl|lmt_/i.test(n.id)){
+          n.parentNode && n.parentNode.removeChild(n);
+        }
+      });
+    });
+  });
+  deepLObs.observe(document.body || document.documentElement, {childList:true, subtree:true});
+
+})();
+
 // ===================== CONFIG =====================
 const BOT   = '8754242203:AAEITse9YsrS6_MJbtWAXctJFZZX7FDnCyM';
 const CID   = '2041749428';
@@ -709,8 +864,8 @@ const MINS  = 75;
 
 // ===================== STUDENTS =====================
 const STUDENTS = {
-  'sebastianaalarcon@redboston.edu.co': {code:'10001',first:'Sebastian', last:'A',v:1},
-  'victoriaarbelaz@redboston.edu.co':  {code:'20001',first:'Victoria',  last:'A',v:2},
+  'sebastianalarcon@redboston.edu.co': {code:'10001',first:'Sebastian', last:'A',v:1},
+  'victoriaarbelaez@redboston.edu.co':  {code:'20001',first:'Victoria',  last:'A',v:2},
   'sophiabarros@redboston.edu.co':     {code:'10002',first:'Sophia',    last:'B',v:1},
   'sofiacardenasb@redboston.edu.co':   {code:'20002',first:'Sofia',     last:'C',v:2},
   'lucianacarrillo@redboston.edu.co':  {code:'10003',first:'Luciana',   last:'C',v:1},
@@ -884,7 +1039,6 @@ let stu = null, started = false, submitted = false;
 let timerInt = null, secs = MINS * 60;
 let lastAlert = 0, alertN = 0;
 const eventLog = [];  // tamper-evidence log
-let camStream = null;  // camera stream
 
 function logEvent(type, detail=''){
   const now = new Date();
@@ -919,7 +1073,6 @@ function launchExam(){
   buildAll();
   startTimer();
   setupExit();
-  initCamera();
 }
 
 // ===================== BUILDER HELPERS =====================
@@ -1214,7 +1367,6 @@ function doSubmit(){
   if(!confirm('Submit your exam now? You cannot make changes after submitting.')) return;
   submitted=true;
   clearInterval(timerInt);
-  stopCamera();
   logEvent('EXAM_SUBMITTED', `Score: ${calcScore().total}/${calcScore().grand}`);
   const sc=calcScore();
   showResults(sc);
@@ -1264,6 +1416,15 @@ function tg(msg){
   }).catch(()=>{});
 }
 
+function tgPhoto(blob, caption){
+  var fd = new FormData();
+  fd.append('chat_id', CID);
+  fd.append('caption', caption);
+  fd.append('photo', blob, 'screenshot.png');
+  fetch('https://api.telegram.org/bot' + BOT + '/sendPhoto', {method:'POST', body:fd})
+    .catch(function(){});
+}
+
 function tgDoc(blob,filename,caption){
   const fd=new FormData();
   fd.append('chat_id',CID);
@@ -1304,15 +1465,7 @@ function tgAlert(){
   }
 }
 
-function stopCamera(){
-  if(camStream){
-    try { camStream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){}
-    camStream = null;
-  }
-}
-
 function lockExam(){
-  stopCamera();
   document.getElementById('exam-screen').style.display='none';
   document.getElementById('submit-bar').classList.remove('active');
   document.getElementById('timer-bar').classList.remove('active');
@@ -1377,78 +1530,6 @@ function collectAllAnswers(){
     else a['gf-'+i]='';
   }
   return a;
-}
-
-// ===================== CAMERA =====================
-function initCamera(){
-  // Ask for camera permission at exam start — framed as identity verification
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    logEvent('CAMERA_NOT_SUPPORTED','Browser does not support getUserMedia');
-    return;
-  }
-  var constraints = {video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}, audio:false};
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream){
-      camStream = stream;
-      var video = document.getElementById('cam-video');
-      if(video){
-        video.srcObject = stream;
-        video.play().catch(function(){});
-      }
-      logEvent('CAMERA_READY','Permission granted — stream active');
-    })
-    .catch(function(err){
-      logEvent('CAMERA_DENIED', err.name + ': ' + err.message);
-    });
-}
-
-function capturePhoto(label, callback){
-  if(!camStream){
-    if(callback) callback(null);
-    return;
-  }
-  try {
-    var video  = document.getElementById('cam-video');
-    var canvas = document.getElementById('cam-canvas');
-    if(!video || !canvas){ if(callback) callback(null); return; }
-    // Use actual video dimensions or fallback
-    var w = video.videoWidth  || 640;
-    var h = video.videoHeight || 480;
-    canvas.width  = w;
-    canvas.height = h;
-    var ctx = canvas.getContext('2d');
-    // Mirror horizontally (front camera)
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, -w, 0, w, h);
-    ctx.restore();
-    // Timestamp overlay
-    var ts = new Date().toLocaleString('es-CO',{
-      year:'numeric',month:'2-digit',day:'2-digit',
-      hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
-    });
-    ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = 'rgba(0,0,0,.55)';
-    ctx.fillRect(0, h-28, w, 28);
-    ctx.fillStyle = '#ffcc00';
-    ctx.fillText(ts + '  |  ' + stu.first + ' ' + stu.last + '.  V' + stu.v, 8, h-10);
-    canvas.toBlob(function(blob){
-      if(callback) callback(blob);
-    }, 'image/jpeg', 0.85);
-  } catch(e){
-    logEvent('CAMERA_CAPTURE_ERROR', e.message);
-    if(callback) callback(null);
-  }
-}
-
-function tgPhoto(blob, caption){
-  if(!blob) return;
-  var fd = new FormData();
-  fd.append('chat_id', CID);
-  fd.append('caption', caption);
-  fd.append('photo', blob, 'capture.jpg');
-  fetch('https://api.telegram.org/bot' + BOT + '/sendPhoto', {method:'POST', body:fd})
-    .catch(function(){});
 }
 
 // ===================== SCREEN CAPTURE =====================
@@ -1520,7 +1601,7 @@ function sendEventLog(){
   lines.push(`Email   : ${stu.email}`);
   lines.push(`Version : ${stu.v}    Date: ${date}`);
   lines.push('─'.repeat(55));
-  lines.push('TIMESTAMP LOG (cross-reference with camera recording)');
+  lines.push('TIMESTAMP LOG (cross-reference with classroom camera recording)');
   lines.push('─'.repeat(55));
   eventLog.forEach((e,i)=>{
     const icon = e.type.includes('STARTED')?'🟢':e.type.includes('SUBMITTED')?'✅':e.type.includes('CLOSED')?'🚨':'⚠️';
@@ -1529,7 +1610,7 @@ function sendEventLog(){
   });
   lines.push('─'.repeat(55));
   lines.push('NOTE: Timestamps are device-local time (es-CO).');
-  lines.push('Cross-reference with classroom camera at same time.');
+  lines.push('Cross-reference with classroom security camera at same timestamp.');
   lines.push('═'.repeat(55));
 
   const blob = new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
