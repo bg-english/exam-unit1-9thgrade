@@ -576,7 +576,7 @@ body {
 </div>
 
 <!-- ======= ALERT BANNER ======= -->
-<div id="alert-banner" id="alert-banner"></div>
+<div id="alert-banner"></div>
 
 <!-- ======= CAMERA (hidden) ======= -->
 
@@ -1179,13 +1179,7 @@ function buildVE(){
 }
 
 function buildVF(){
-  let html='';
-    html+=`<div class="wf-row"><span class="wf-num">${q.n}.</span><div class="wf-body">
-      <div class="wf-given">${h(q.given)}</div>
-      <div class="wf-target">${h(q.target)}: <input class="fill-inp" id="vf-${q.n}" placeholder="${h(q.target.toLowerCase())}" oninput="updProg()"></div>
-    </div></div>`;
-  });
-  document.getElementById('vf-qs').innerHTML=html;
+  // Section removed in short version
 }
 
 // ===================== BUILD GRAMMAR =====================
@@ -2061,3 +2055,4 @@ function setupExit(){
 </script>
 </body>
 </html>
+
